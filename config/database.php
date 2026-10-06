@@ -179,6 +179,43 @@ function availability_badge(string $availability): string
 }
 
 /**
+ * Render a vehicle as a Bootstrap card (used on the home page
+ * and the vehicle listing). Links to the vehicle details page.
+ */
+function vehicle_card(array $v): string
+{
+    $url = BASE_URL . '/vehicle_details.php?vehicle_id=' . (int) $v['vehicle_id'];
+    $img = BASE_URL . '/assets/images/vehicles/' . e($v['image']);
+    $name = e($v['brand'] . ' ' . $v['model']);
+    return '
+    <div class="col-md-6 col-lg-4 mb-4">
+      <a href="' . $url . '" class="text-decoration-none">
+        <div class="card vehicle-card h-100">
+          <img src="' . $img . '" class="card-img-top" alt="' . $name . '">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-1">
+              <h6 class="mb-0">' . $name . '</h6>
+              ' . availability_badge((string) $v['availability']) . '
+            </div>
+            <div class="text-muted-2 small mb-2">'
+              . e($v['type']) . ' &middot; ' . e($v['fuel_type']) . ' &middot; ' . e($v['transmission'])
+            . '</div>
+            <ul class="spec-list">
+              <li><i class="bi bi-people me-2"></i>' . (int) $v['seating_capacity'] . ' seats</li>
+              <li><i class="bi bi-shield me-2"></i>Deposit ' . e(format_money($v['security_deposit'])) . '</li>
+            </ul>
+            <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
+              <span class="price-badge">' . e(format_money($v['rent_per_day']))
+                . '<small class="text-muted-2 fw-normal"> /day</small></span>
+              <span class="btn btn-sm btn-rideease">Details</span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>';
+}
+
+/**
  * Count bookings of a vehicle that overlap the given date range.
  * Only bookings that block a new rental are counted
  * (Pending, Confirmed, Active). Cancelled/Rejected/Completed do not block.
