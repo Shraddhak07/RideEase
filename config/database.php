@@ -138,6 +138,46 @@ function current_admin(): ?array
     return $_SESSION['admin'] ?? null;
 }
 
+/** Render a booking status as a styled pill badge. */
+function booking_status_pill(string $status): string
+{
+    $map = [
+        'Pending'   => 'status-pill status-pending',
+        'Confirmed' => 'status-pill status-confirmed',
+        'Active'    => 'status-pill status-active',
+        'Completed' => 'status-pill status-completed',
+        'Cancelled' => 'status-pill status-cancelled',
+        'Rejected'  => 'status-pill status-rejected',
+    ];
+    $cls = $map[$status] ?? 'status-pill status-completed';
+    return '<span class="' . $cls . '">' . e($status) . '</span>';
+}
+
+/** Render a payment status as a styled pill badge. */
+function payment_status_pill(string $status): string
+{
+    $map = [
+        'Pending'  => 'status-pill status-pending',
+        'Paid'     => 'status-pill status-active',
+        'Failed'   => 'status-pill status-cancelled',
+        'Refunded' => 'status-pill status-confirmed',
+    ];
+    $cls = $map[$status] ?? 'status-pill status-completed';
+    return '<span class="' . $cls . '">' . e($status) . '</span>';
+}
+
+/** Render a vehicle availability status as a badge. */
+function availability_badge(string $availability): string
+{
+    $map = [
+        'Available'   => 'badge badge-available',
+        'Unavailable' => 'badge badge-unavailable',
+        'Maintenance' => 'badge badge-maintenance',
+    ];
+    $cls = $map[$availability] ?? 'badge badge-unavailable';
+    return '<span class="' . $cls . '">' . e($availability) . '</span>';
+}
+
 /**
  * Count bookings of a vehicle that overlap the given date range.
  * Only bookings that block a new rental are counted
