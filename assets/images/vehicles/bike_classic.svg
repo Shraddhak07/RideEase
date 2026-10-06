@@ -1,0 +1,15 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240" role="img" aria-label="Royal Enfield Classic 350">
+  <rect width="400" height="240" fill="#e8eef4"/>
+  <rect y="180" width="400" height="60" fill="#d5dde5"/>
+  <rect y="176" width="400" height="6" fill="#c3ccd6"/>
+  <circle cx="115" cy="172" r="30" fill="#2f3337"/>
+  <circle cx="115" cy="172" r="15" fill="#aeb6bf"/>
+  <circle cx="285" cy="172" r="30" fill="#2f3337"/>
+  <circle cx="285" cy="172" r="15" fill="#aeb6bf"/>
+  <path d="M115 172 L170 105 L250 105 L285 172" fill="none" stroke="#b03a2e" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M170 105 L210 78 L250 105" fill="none" stroke="#b03a2e" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="198" y="66" width="26" height="16" rx="8" fill="#2f3337"/>
+  <rect x="100" y="150" width="30" height="12" rx="5" fill="#ffe9a3"/>
+  <rect x="272" y="150" width="22" height="12" rx="5" fill="#e06c6c"/>
+  <text x="200" y="40" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="600" fill="#4a5560">Royal Enfield Classic 350</text>
+</svg>

@@ -1,0 +1,29 @@
+# RideEase - gitignore
+
+# OS generated files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor / IDE folders
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs and temp files
+*.log
+*.tmp
+/error_log
+
+# Local development notes (not part of the project)
+notes.txt
+TODO.txt
+
+# NOTE: config/database.php IS tracked - it only contains the
+# standard XAMPP defaults (root / empty password). If you change
+# it for a real deployment, consider ignoring it and committing
+# a config/database.php.example instead.

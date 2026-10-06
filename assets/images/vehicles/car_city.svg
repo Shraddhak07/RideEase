@@ -1,0 +1,15 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240" role="img" aria-label="Honda City">
+  <rect width="400" height="240" fill="#e8eef4"/>
+  <rect y="180" width="400" height="60" fill="#d5dde5"/>
+  <rect y="176" width="400" height="6" fill="#c3ccd6"/>
+  <path d="M70 172 Q70 130 105 124 L145 116 L185 88 Q192 80 205 80 L255 80 Q268 80 276 90 L300 118 Q330 126 330 172 Z" fill="#f39c12"/>
+  <path d="M150 112 L185 88 Q192 80 205 80 L255 80 Q268 80 276 90 L292 110 L148 112 Z" fill="#bfe0f5"/>
+  <rect x="88" y="140" width="230" height="14" rx="7" fill="#22282e"/>
+  <rect x="318" y="132" width="16" height="12" rx="4" fill="#ffe9a3"/>
+  <rect x="66" y="132" width="14" height="12" rx="4" fill="#e06c6c"/>
+  <circle cx="140" cy="172" r="26" fill="#2f3337"/>
+  <circle cx="140" cy="172" r="13" fill="#aeb6bf"/>
+  <circle cx="270" cy="172" r="26" fill="#2f3337"/>
+  <circle cx="270" cy="172" r="13" fill="#aeb6bf"/>
+  <text x="200" y="40" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="600" fill="#4a5560">Honda City</text>
+</svg>

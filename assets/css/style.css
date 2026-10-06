@@ -1,0 +1,221 @@
+/* ============================================================
+   RideEase - Custom styles
+   Built on top of local Bootstrap 5.3. No external fonts/CDN.
+   ============================================================ */
+
+:root {
+  --rideease-primary: #4361ee;
+  --rideease-primary-dark: #3a56d4;
+  --rideease-navy: #14162b;
+  --rideease-light: #f4f6fb;
+}
+
+/* ---------- Navigation ---------- */
+.rideease-nav {
+  background: linear-gradient(135deg, var(--rideease-primary) 0%, #5a4fcf 100%);
+  box-shadow: 0 2px 10px rgba(67, 97, 238, .25);
+}
+.rideease-nav .navbar-brand { font-size: 1.35rem; letter-spacing: .3px; }
+.rideease-nav .nav-link {
+  font-weight: 500;
+  padding: .5rem .9rem;
+  border-radius: .5rem;
+  margin: 0 .1rem;
+}
+.rideease-nav .nav-link:hover { background: rgba(255,255,255,.12); }
+.rideease-nav .nav-link.active {
+  background: rgba(255,255,255,.18);
+  color: #fff;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  background: linear-gradient(135deg, #4361ee 0%, #5a4fcf 55%, #7b5cd6 100%);
+  color: #fff;
+  padding: 72px 0;
+}
+.hero h1 { font-weight: 700; font-size: 2.6rem; }
+.hero p.lead { opacity: .92; }
+.hero .btn-light {
+  padding: .7rem 1.6rem;
+  font-weight: 600;
+  border-radius: .5rem;
+}
+
+/* ---------- Sections ---------- */
+.section-title { font-weight: 700; margin-bottom: .35rem; }
+.section-subtitle { color: #6b7280; margin-bottom: 2rem; }
+
+/* ---------- Vehicle cards ---------- */
+.vehicle-card {
+  border: 1px solid #e5e9f2;
+  border-radius: .9rem;
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease;
+  height: 100%;
+  background: #fff;
+}
+.vehicle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(20, 22, 43, .12);
+}
+.vehicle-card img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  background: #eef2f7;
+}
+.vehicle-card .card-body { padding: 1.1rem 1.25rem; }
+.vehicle-card .price-badge {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--rideease-primary);
+}
+.vehicle-card .spec-list { list-style: none; padding: 0; margin: 0 0 .6rem; }
+.vehicle-card .spec-list li { font-size: .9rem; color: #555c6b; margin-bottom: .15rem; }
+
+/* ---------- Availability badges ---------- */
+.badge-available    { background: #198754; }
+.badge-unavailable  { background: #dc3545; }
+.badge-maintenance  { background: #fd7e14; }
+
+/* ---------- Cards / stat boxes ---------- */
+.stat-card {
+  border: none;
+  border-radius: .9rem;
+  box-shadow: 0 2px 10px rgba(20,22,43,.06);
+}
+.stat-card .stat-icon {
+  width: 52px; height: 52px;
+  border-radius: .8rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+}
+.stat-card .stat-value { font-size: 1.7rem; font-weight: 700; }
+
+/* ---------- Forms ---------- */
+.form-control:focus, .form-select:focus {
+  border-color: var(--rideease-primary);
+  box-shadow: 0 0 0 .2rem rgba(67,97,238,.18);
+}
+.btn-rideease {
+  background: var(--rideease-primary);
+  border-color: var(--rideease-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.btn-rideease:hover {
+  background: var(--rideease-primary-dark);
+  border-color: var(--rideease-primary-dark);
+  color: #fff;
+}
+
+/* ---------- Footer ---------- */
+.rideease-footer {
+  background: var(--rideease-navy);
+  color: #fff;
+}
+.rideease-footer .footer-link {
+  color: rgba(255,255,255,.7);
+  text-decoration: none;
+}
+.rideease-footer .footer-link:hover { color: #fff; text-decoration: underline; }
+
+/* ---------- Admin sidebar ---------- */
+.admin-sidebar {
+  background: var(--rideease-navy);
+  min-height: 100vh;
+  padding-top: 1.25rem;
+}
+.admin-sidebar .brand {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 0 1.25rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  margin-bottom: 1rem;
+}
+.admin-sidebar .nav-link {
+  color: rgba(255,255,255,.75);
+  padding: .6rem 1.25rem;
+  border-radius: .5rem;
+  margin: .1rem .75rem;
+  font-weight: 500;
+}
+.admin-sidebar .nav-link:hover { background: rgba(255,255,255,.1); color: #fff; }
+.admin-sidebar .nav-link.active {
+  background: var(--rideease-primary);
+  color: #fff;
+}
+
+/* ---------- Tables ---------- */
+.table thead th {
+  background: #f1f4fa;
+  border-bottom: 2px solid #dde3ee;
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: #4b5563;
+}
+.table tbody tr { vertical-align: middle; }
+
+/* ---------- Status pills ---------- */
+.status-pill { font-size: .8rem; padding: .35em .7em; border-radius: 999px; }
+.status-pending   { background: #fff3cd; color: #664d03; }
+.status-confirmed { background: #cff4fc; color: #055160; }
+.status-active    { background: #d1e7dd; color: #0f5132; }
+.status-completed { background: #e2e3e5; color: #41464b; }
+.status-cancelled { background: #f8d7da; color: #842029; }
+.status-rejected  { background: #f8d7da; color: #842029; }
+
+/* ---------- Booking summary box ---------- */
+.summary-box {
+  background: var(--rideease-light);
+  border: 1px solid #dde3ee;
+  border-radius: .9rem;
+  padding: 1.25rem 1.5rem;
+}
+.summary-box .row { margin-bottom: .45rem; }
+.summary-box .total-row {
+  border-top: 2px solid #c9d3e8;
+  padding-top: .6rem;
+  margin-top: .6rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* ---------- Receipt (print) ---------- */
+.receipt {
+  background: #fff;
+  border: 1px solid #e5e9f2;
+  border-radius: .9rem;
+  padding: 2rem;
+  max-width: 640px;
+  margin: 0 auto;
+}
+@media print {
+  .no-print { display: none !important; }
+  .hero, .rideease-nav, .rideease-footer, .navbar, footer { display: none !important; }
+  body { background: #fff; }
+  .receipt { border: none; padding: 0; max-width: none; }
+  main { padding: 0 !important; }
+}
+
+/* ---------- Misc ---------- */
+.text-muted-2 { color: #6b7280; }
+.img-vehicle-lg {
+  width: 100%;
+  max-height: 340px;
+  object-fit: cover;
+  border-radius: .9rem;
+  background: #eef2f7;
+}
+.step-icon {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--rideease-primary);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  margin: 0 auto .8rem;
+}
