@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RideEase | Admin Dashboard</title>
+  <meta name="description" content="RideEase admin control panel for premium pre-owned bikes." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+          },
+          keyframes: {
+            fadeUp: {
+              '0%':   { opacity: '0', transform: 'translateY(18px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            pop: {
+              '0%':   { opacity: '0', transform: 'scale(.96)' },
+              '100%': { opacity: '1', transform: 'scale(1)' }
+            },
+            slideIn: {
+              '0%':   { opacity: '0', transform: 'translateX(28px)' },
+              '100%': { opacity: '1', transform: 'translateX(0)' }
+            }
+          },
+          animation: {
+            fadeUp: 'fadeUp .45s ease-out both',
+            pop: 'pop .3s ease-out both',
+            slideIn: 'slideIn .35s ease-out both'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { background-color: #020617; }
+    ::-webkit-scrollbar { width: 9px; height: 9px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+    .glass { background: rgba(15, 23, 42, .78); backdrop-filter: blur(14px); }
+    .accent-ring:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, .22); }
+    .grid-glow {
+      background-image: radial-gradient(circle at 20% 15%, rgba(245,158,11,.10), transparent 45%),
+                        radial-gradient(circle at 85% 80%, rgba(249,115,22,.09), transparent 45%);
+    }
+    input[type="file"] { display: none; }
+  </style>
+</head>
+
+<body class="font-sans text-slate-200 antialiased min-h-screen grid-glow">
+
+  <!-- ============================================================
+       LOGIN SCREEN
+       ============================================================ -->
+  <section id="loginScreen" class="min-h-screen flex items-center justify-center px-4 py-10">
+    <div class="w-full max-w-md animate-pop">
+
+      <div class="text-center mb-7">
+        <div class="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-600/30">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0V9a4 4 0 0 0-8 0v4H5m0 0v4a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4M9 9h.01" />
+          </svg>
+        </div>
+        <h1 class="mt-4 text-3xl font-extrabold tracking-tight text-white">RideEase</h1>
+        <p class="text-sm text-slate-400 mt-1">Admin Control Panel &middot; Premium Pre-Owned Bikes</p>
+      </div>
+
+      <div class="glass rounded-3xl border border-slate-700/70 p-8 shadow-2xl shadow-black/50">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="h-2.5 w-2.5 rounded-full bg-amber-500 shadow-[0_0_12px_2px_rgba(245,158,11,.7)]"></span>
+          <h2 class="text-lg font-bold text-white">Secure Sign In</h2>
+        </div>
+
+        <div id="loginError" class="hidden mb-5 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300"></div>
+
+        <form id="loginForm" autocomplete="off" class="space-y-5">
+          <div>
+            <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Username</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z" />
+                </svg>
+              </span>
+              <input id="username" name="username" type="text" required placeholder="admin"
+                class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 py-3 pl-11 pr-4 text-sm text-white placeholder-slate-500 transition" />
+            </div>
+          </div>
+
+          <div>
+            <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Password</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 12.75v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                </svg>
+              </span>
+              <input id="password" name="password" type="password" required placeholder="••••••••"
+                class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 py-3 pl-11 pr-4 text-sm text-white placeholder-slate-500 transition" />
+            </div>
+          </div>
+
+          <button id="loginBtn" type="submit"
+            class="w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-orange-600/25 transition hover:brightness-110 active:scale-[.98] disabled:opacity-60 disabled:cursor-not-allowed">
+            Sign In to Dashboard
+          </button>
+        </form>
+
+        <div class="mt-6 rounded-xl border border-dashed border-slate-700 bg-slate-900/60 px-4 py-3 text-center">
+          <p class="text-[11px] uppercase tracking-widest text-slate-500 mb-1">Demo Credentials</p>
+          <p class="text-sm text-amber-400 font-mono">admin &nbsp;/&nbsp; admin123</p>
+        </div>
+      </div>
+
+      <p class="text-center text-xs text-slate-600 mt-6">&copy; 2026 RideEase &middot; College Project</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ADMIN DASHBOARD
+       ============================================================ -->
+  <section id="dashboard" class="hidden min-h-screen">
+
+    <!-- Top bar -->
+    <header class="sticky top-0 z-40 glass border-b border-slate-800">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-600/25">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0V9a4 4 0 0 0-8 0v4H5m0 0v4a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4M9 9h.01" />
+              </svg>
+            </div>
+            <div class="leading-tight">
+              <p class="text-white font-extrabold tracking-tight">RideEase</p>
+              <p class="text-[11px] uppercase tracking-widest text-amber-500">Admin Dashboard</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span class="hidden sm:inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1.5 text-xs text-slate-300">
+              <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Signed in as <span class="font-semibold text-white" id="adminName">admin</span>
+            </span>
+            <button id="logoutBtn"
+              class="rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-amber-500 hover:text-amber-400">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard body -->
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mb-8 animate-fadeUp">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Inventory Control Room</h1>
+        <p class="text-sm text-slate-400 mt-1">Add a pre-owned bike on the left, watch it appear live in the showroom on the right.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[390px_1fr] gap-6">
+
+        <!-- ============ SIDEBAR : ADD NEW VEHICLE ============ -->
+        <aside class="lg:sticky lg:top-24 lg:self-start animate-fadeUp">
+          <div class="rounded-3xl border border-slate-700/70 glass overflow-hidden shadow-2xl shadow-black/40">
+            <div class="bg-gradient-to-r from-amber-500/15 to-orange-600/10 border-b border-slate-700/70 px-6 py-5">
+              <div class="flex items-center gap-3">
+                <span class="h-9 w-9 rounded-lg bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                </span>
+                <div>
+                  <h2 class="font-bold text-white">Add New Vehicle</h2>
+                  <p class="text-xs text-slate-400">Upload a bike to the active showroom</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="uploadError" class="hidden mx-6 mt-5 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs text-red-300"></div>
+            <div id="uploadSuccess" class="hidden mx-6 mt-5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-xs text-emerald-300"></div>
+
+            <form id="bikeForm" class="p-6 space-y-5">
+              <div>
+                <label for="title" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Bike Title</label>
+                <input id="title" name="title" type="text" required maxlength="150" placeholder="e.g. Royal Enfield Himalayan 411"
+                  class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-white placeholder-slate-500 transition" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="price" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Price (&#8377;)</label>
+                  <input id="price" name="price" type="number" min="1" step="0.01" required placeholder="85000"
+                    class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-white placeholder-slate-500 transition" />
+                </div>
+                <div>
+                  <label for="km_driven" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">KM Driven</label>
+                  <input id="km_driven" name="km_driven" type="number" min="0" step="1" required placeholder="12000"
+                    class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-white placeholder-slate-500 transition" />
+                </div>
+              </div>
+
+              <div>
+                <label for="description" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Description</label>
+                <textarea id="description" name="description" rows="4" required maxlength="1000"
+                  placeholder="Condition, ownership, service history, documents..."
+                  class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-white placeholder-slate-500 transition resize-none"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Bike Image</label>
+                <label for="image" id="dropZone"
+                  class="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-700 bg-slate-900/60 px-4 py-6 cursor-pointer transition hover:border-amber-500/70 hover:bg-slate-900">
+                  <img id="imagePreview" class="hidden h-28 w-full object-cover rounded-lg" alt="Bike preview" />
+                  <div id="dropHint" class="text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mx-auto text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z" />
+                    </svg>
+                    <p class="mt-1.5 text-xs text-slate-400"><span class="text-amber-400 font-semibold">Click to upload</span> a photo</p>
+                    <p class="text-[11px] text-slate-600 mt-0.5">JPG, PNG, WEBP or SVG &middot; max 5 MB</p>
+                  </div>
+                  <span id="fileName" class="hidden text-xs font-semibold text-amber-400"></span>
+                </label>
+                <input id="image" name="image" type="file" accept="image/*" required />
+              </div>
+
+              <button id="uploadBtn" type="submit"
+                class="w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-orange-600/25 transition hover:brightness-110 active:scale-[.98] disabled:opacity-60 disabled:cursor-not-allowed">
+                Publish to Showroom
+              </button>
+            </form>
+          </div>
+        </aside>
+
+        <!-- ============ LIVE ACTIVE SHOWROOM ============ -->
+        <section class="animate-fadeUp">
+          <div class="rounded-3xl border border-slate-700/70 glass overflow-hidden shadow-2xl shadow-black/40">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700/70 px-6 py-5 bg-gradient-to-r from-slate-900/80 to-slate-800/40">
+              <div class="flex items-center gap-3">
+                <span class="relative flex h-3 w-3">
+                  <span class="absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-70 animate-ping"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                <div>
+                  <h2 class="font-bold text-white">Live Active Showroom</h2>
+                  <p class="text-xs text-slate-400">Fetched straight from the database</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-400">
+                  <span id="bikeCount">0</span> Vehicles Active
+                </span>
+                <button id="refreshBtn"
+                  class="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-amber-500 hover:text-amber-400">
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            <div class="p-6">
+              <div id="loadingState" class="hidden py-16 text-center">
+                <svg class="animate-spin h-9 w-9 mx-auto text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z"></path>
+                </svg>
+                <p class="mt-3 text-sm text-slate-400">Loading showroom inventory...</p>
+              </div>
+
+              <div id="emptyState" class="hidden py-16 text-center">
+                <div class="mx-auto h-16 w-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h.375c.621 0 1.125-.504 1.125-1.125V11.25m0 0h-4.125c-.621 0-1.125-.504-1.125-1.125V5.25m0 0h-.75A2.25 2.25 0 0 0 9 3H6.75A2.25 2.25 0 0 0 4.5 5.25v6c0 .621.504 1.125 1.125 1.125H9" />
+                  </svg>
+                </div>
+                <h3 class="mt-4 font-bold text-white">No vehicles in the showroom yet</h3>
+                <p class="text-sm text-slate-400 mt-1">Use the form to publish your first pre-owned bike.</p>
+              </div>
+
+              <div id="bikeGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="border-t border-slate-800 mt-8">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+        <p>&copy; 2026 RideEase Admin &middot; Premium Pre-Owned Bikes</p>
+        <p>Node.js &middot; Express &middot; MySQL &middot; Multer</p>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ============================================================
+       EDIT VEHICLE MODAL
+       ============================================================ -->
+  <div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="editBackdrop" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+
+    <div class="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl border border-slate-700/70 bg-slate-900 shadow-2xl shadow-black/70 animate-pop">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-slate-800 bg-gradient-to-r from-amber-500/12 to-orange-600/8">
+        <div class="flex items-center gap-3">
+          <span class="h-9 w-9 rounded-lg bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+            </svg>
+          </span>
+          <div>
+            <h2 class="font-bold text-white">Edit Vehicle</h2>
+            <p class="text-xs text-slate-400">Update details or swap the photo</p>
+          </div>
+        </div>
+        <button id="editClose" type="button" aria-label="Close editor"
+          class="h-9 w-9 rounded-full border border-slate-700 bg-slate-950/70 text-slate-300 flex items-center justify-center transition hover:border-amber-500 hover:text-amber-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div id="editError" class="hidden mx-6 mt-5 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs text-red-300"></div>
+
+      <form id="editForm" class="p-6 space-y-5">
+        <input type="hidden" id="editId" />
+
+        <div>
+          <label for="editTitle" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Bike Title</label>
+          <input id="editTitle" name="title" type="text" required maxlength="150"
+            class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-white placeholder-slate-500 transition" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="editPrice" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Price (&#8377;)</label>
+            <input id="editPrice" name="price" type="number" min="1" step="0.01" required
+              class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-white transition" />
+          </div>
+          <div>
+            <label for="editKm" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">KM Driven</label>
+            <input id="editKm" name="km_driven" type="number" min="0" step="1" required
+              class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-white transition" />
+          </div>
+        </div>
+
+        <div>
+          <label for="editDescription" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Description</label>
+          <textarea id="editDescription" name="description" rows="4" required maxlength="1000"
+            class="accent-ring w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-white placeholder-slate-500 transition resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Change Image (optional)</label>
+          <div class="rounded-xl border border-slate-700 bg-slate-950/60 p-3">
+            <img id="editPreview" alt="Current bike image" class="h-36 w-full object-cover rounded-lg bg-slate-800" />
+            <label for="editImage" class="mt-3 flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-slate-700 px-4 py-3 cursor-pointer text-xs text-slate-400 transition hover:border-amber-500/70 hover:text-amber-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+              </svg>
+              <span id="editFileName">Pick a new photo (leave empty to keep current)</span>
+            </label>
+            <input id="editImage" name="image" type="file" accept="image/*" />
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-1">
+          <button id="editSubmitBtn" type="submit"
+            class="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-orange-600/25 transition hover:brightness-110 active:scale-[.98] disabled:opacity-60 disabled:cursor-not-allowed">
+            Save Changes
+          </button>
+          <button id="editCancelBtn" type="button"
+            class="rounded-xl border border-slate-700 bg-slate-950/60 px-5 py-3.5 text-sm font-bold text-slate-300 transition hover:border-slate-500 hover:text-white">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       TOAST
+       ============================================================ -->
+  <div id="toastWrap" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end"></div>
+
+  <script>
+    /* ---------------- helpers ---------------- */
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function money(amount) {
+      return '&#8377;' + Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+
+    function toast(message, type = 'success') {
+      const colors = type === 'error'
+        ? 'border-red-500/50 bg-red-500/15 text-red-200'
+        : 'border-emerald-500/50 bg-emerald-500/15 text-emerald-200';
+      const el = document.createElement('div');
+      el.className = `animate-slideIn pointer-events-auto rounded-xl border ${colors} px-4 py-3 text-sm font-medium shadow-2xl shadow-black/50 backdrop-blur`;
+      el.textContent = message;
+      $('toastWrap').appendChild(el);
+      setTimeout(() => {
+        el.style.transition = 'opacity .4s, transform .4s';
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(28px)';
+        setTimeout(() => el.remove(), 420);
+      }, 3200);
+    }
+
+    function setLoading(button, isLoading, loadingText, idleText) {
+      button.disabled = isLoading;
+      button.textContent = isLoading ? loadingText : idleText;
+    }
+
+    /* ---------------- login ---------------- */
+    const loginForm = $('loginForm');
+    const loginError = $('loginError');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('loginBtn');
+      loginError.classList.add('hidden');
+      setLoading(btn, true, 'Verifying credentials...', 'Sign In to Dashboard');
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: $('username').value.trim(),
+            password: $('password').value
+          })
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          loginError.textContent = data.message || 'Login failed. Please try again.';
+          loginError.classList.remove('hidden');
+          return;
+        }
+
+        $('adminName').textContent = data.admin.username;
+        $('loginScreen').classList.add('hidden');
+        $('dashboard').classList.remove('hidden');
+        toast(data.message);
+        loadBikes();
+      } catch (err) {
+        loginError.textContent = 'Could not reach the server. Is server.js running?';
+        loginError.classList.remove('hidden');
+      } finally {
+        setLoading(btn, false, '', 'Sign In to Dashboard');
+      }
+    });
+
+    $('logoutBtn').addEventListener('click', () => {
+      $('dashboard').classList.add('hidden');
+      $('loginScreen').classList.remove('hidden');
+      loginForm.reset();
+      $('uploadError').classList.add('hidden');
+      $('uploadSuccess').classList.add('hidden');
+      toast('Logged out successfully.');
+    });
+
+    /* ---------------- image preview ---------------- */
+    const imageInput = $('image');
+    const imagePreview = $('imagePreview');
+    const dropHint = $('dropHint');
+    const fileName = $('fileName');
+
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files[0];
+      if (!file) {
+        imagePreview.classList.add('hidden');
+        dropHint.classList.remove('hidden');
+        fileName.classList.add('hidden');
+        return;
+      }
+      imagePreview.src = URL.createObjectURL(file);
+      imagePreview.classList.remove('hidden');
+      dropHint.classList.add('hidden');
+      fileName.textContent = file.name;
+      fileName.classList.remove('hidden');
+    });
+
+    /* ---------------- upload bike ---------------- */
+    const bikeForm = $('bikeForm');
+    const uploadError = $('uploadError');
+    const uploadSuccess = $('uploadSuccess');
+
+    bikeForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('uploadBtn');
+      uploadError.classList.add('hidden');
+      uploadSuccess.classList.add('hidden');
+
+      const formData = new FormData();
+      formData.append('title', $('title').value.trim());
+      formData.append('price', $('price').value);
+      formData.append('km_driven', $('km_driven').value);
+      formData.append('description', $('description').value.trim());
+      formData.append('image', imageInput.files[0]);
+
+      setLoading(btn, true, 'Publishing...', 'Publish to Showroom');
+
+      try {
+        const res = await fetch('/api/upload-bike', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          uploadError.textContent = data.message || 'Upload failed. Please try again.';
+          uploadError.classList.remove('hidden');
+          return;
+        }
+
+        uploadSuccess.textContent = data.message;
+        uploadSuccess.classList.remove('hidden');
+        toast(data.message);
+        bikeForm.reset();
+        imagePreview.classList.add('hidden');
+        dropHint.classList.remove('hidden');
+        fileName.classList.add('hidden');
+        await loadBikes();
+      } catch (err) {
+        uploadError.textContent = 'Could not reach the server. Is server.js running?';
+        uploadError.classList.remove('hidden');
+      } finally {
+        setLoading(btn, false, '', 'Publish to Showroom');
+      }
+    });
+
+    /* ---------------- showroom ---------------- */
+    let bikes = [];
+
+    async function loadBikes() {
+      const grid = $('bikeGrid');
+      const loading = $('loadingState');
+      const empty = $('emptyState');
+
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      grid.innerHTML = '';
+
+      try {
+        const res = await fetch('/api/bikes');
+        const data = await res.json();
+        bikes = data.bikes || [];
+
+        $('bikeCount').textContent = bikes.length;
+
+        if (bikes.length === 0) {
+          empty.classList.remove('hidden');
+          return;
+        }
+
+        grid.innerHTML = bikes.map((bike) => `
+          <article class="group rounded-2xl border border-slate-700/70 bg-slate-900/70 overflow-hidden transition hover:border-amber-500/60 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/40">
+            <div class="relative h-36 bg-slate-800 overflow-hidden">
+              <img src="${escapeHtml(bike.image_url)}" alt="${escapeHtml(bike.title)}"
+                   class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+              <span class="absolute top-2.5 right-2.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                Active
+              </span>
+            </div>
+            <div class="p-4">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="font-bold text-white leading-snug truncate">${escapeHtml(bike.title)}</h3>
+                <span class="shrink-0 rounded-md bg-amber-500/15 border border-amber-500/40 px-2 py-0.5 text-[11px] font-bold text-amber-400">
+                  #${escapeHtml(bike.id)}
+                </span>
+              </div>
+              <div class="mt-3 flex items-center justify-between">
+                <p class="text-lg font-extrabold text-amber-400">${money(bike.price)}</p>
+                <p class="text-xs text-slate-400">
+                  <span class="font-semibold text-slate-300">${Number(bike.km_driven).toLocaleString('en-IN')}</span> km
+                </p>
+              </div>
+              <div class="mt-3 h-px bg-slate-800"></div>
+              <div class="mt-3 flex items-center gap-2">
+                <button type="button" data-edit="${escapeHtml(bike.id)}"
+                  class="flex-1 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-400 transition hover:bg-amber-500 hover:text-slate-900 active:scale-95">
+                  Edit
+                </button>
+                <button type="button" data-delete="${escapeHtml(bike.id)}"
+                  class="flex-1 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-bold text-red-400 transition hover:bg-red-500 hover:text-white active:scale-95">
+                  Delete
+                </button>
+              </div>
+              <p class="mt-3 text-[11px] text-slate-500">Listed ${new Date(bike.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+            </div>
+          </article>
+        `).join('');
+      } catch (err) {
+        grid.innerHTML = `
+          <div class="col-span-full rounded-2xl border border-red-500/40 bg-red-500/10 px-5 py-8 text-center">
+            <p class="font-semibold text-red-300">Could not load the showroom.</p>
+            <p class="text-sm text-red-300/70 mt-1">Check that server.js is running and MySQL is up.</p>
+          </div>`;
+      } finally {
+        loading.classList.add('hidden');
+      }
+    }
+
+    $('refreshBtn').addEventListener('click', () => {
+      loadBikes();
+      toast('Showroom refreshed.');
+    });
+
+    /* ---------------- edit + delete ---------------- */
+    const editForm = $('editForm');
+    const editError = $('editError');
+    const editImageInput = $('editImage');
+
+    function openEditModal(id) {
+      const bike = bikes.find((b) => Number(b.id) === Number(id));
+      if (!bike) {
+        toast('That bike could not be found.', 'error');
+        return;
+      }
+
+      editError.classList.add('hidden');
+      editForm.reset();
+      editImageInput.value = '';
+      $('editFileName').textContent = 'Pick a new photo (leave empty to keep current)';
+
+      $('editId').value = bike.id;
+      $('editTitle').value = bike.title;
+      $('editPrice').value = Number(bike.price);
+      $('editKm').value = Number(bike.km_driven);
+      $('editDescription').value = bike.description;
+      $('editPreview').src = bike.image_url;
+      $('editPreview').alt = bike.title;
+
+      $('editModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditModal() {
+      $('editModal').classList.add('hidden');
+      document.body.style.overflow = '';
+      editImageInput.value = '';
+    }
+
+    editImageInput.addEventListener('change', () => {
+      const file = editImageInput.files[0];
+      if (file) {
+        $('editPreview').src = URL.createObjectURL(file);
+        $('editFileName').textContent = file.name;
+      } else {
+        const bike = bikes.find((b) => Number(b.id) === Number($('editId').value));
+        if (bike) $('editPreview').src = bike.image_url;
+        $('editFileName').textContent = 'Pick a new photo (leave empty to keep current)';
+      }
+    });
+
+    $('bikeGrid').addEventListener('click', (e) => {
+      const editBtn = e.target.closest('[data-edit]');
+      if (editBtn) {
+        openEditModal(editBtn.dataset.edit);
+        return;
+      }
+
+      const deleteBtn = e.target.closest('[data-delete]');
+      if (deleteBtn) {
+        deleteBike(deleteBtn.dataset.delete);
+      }
+    });
+
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('editSubmitBtn');
+      const bikeId = $('editId').value;
+      editError.classList.add('hidden');
+
+      const formData = new FormData();
+      formData.append('title', $('editTitle').value.trim());
+      formData.append('price', $('editPrice').value);
+      formData.append('km_driven', $('editKm').value);
+      formData.append('description', $('editDescription').value.trim());
+      if (editImageInput.files[0]) {
+        formData.append('image', editImageInput.files[0]);
+      }
+
+      setLoading(btn, true, 'Saving...', 'Save Changes');
+
+      try {
+        const res = await fetch('/api/bikes/' + encodeURIComponent(bikeId), {
+          method: 'PUT',
+          body: formData
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          editError.textContent = data.message || 'Update failed. Please try again.';
+          editError.classList.remove('hidden');
+          return;
+        }
+
+        closeEditModal();
+        toast(data.message);
+        await loadBikes();
+      } catch (err) {
+        editError.textContent = 'Could not reach the server. Is server.js running?';
+        editError.classList.remove('hidden');
+      } finally {
+        setLoading(btn, false, '', 'Save Changes');
+      }
+    });
+
+    async function deleteBike(id) {
+      const bike = bikes.find((b) => Number(b.id) === Number(id));
+      if (!bike) {
+        toast('That bike could not be found.', 'error');
+        return;
+      }
+
+      const confirmed = window.confirm(
+        'Delete "' + bike.title + '" from the showroom?\n\nThis removes the bike and its uploaded image permanently.'
+      );
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch('/api/bikes/' + encodeURIComponent(id), { method: 'DELETE' });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          toast(data.message || 'Delete failed. Please try again.', 'error');
+          return;
+        }
+
+        toast(data.message);
+        await loadBikes();
+      } catch (err) {
+        toast('Could not reach the server. Is server.js running?', 'error');
+      }
+    }
+
+    $('editClose').addEventListener('click', closeEditModal);
+    $('editCancelBtn').addEventListener('click', closeEditModal);
+    $('editBackdrop').addEventListener('click', closeEditModal);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !$('editModal').classList.contains('hidden')) {
+        closeEditModal();
+      }
+    });
+  </script>
+</body>
+</html>

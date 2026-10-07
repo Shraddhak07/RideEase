@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RideEase | Premium Pre-Owned Bikes</title>
+  <meta name="description" content="RideEase - a stylish e-commerce showroom for premium pre-owned bikes." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+          },
+          keyframes: {
+            fadeUp: {
+              '0%':   { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            pop: {
+              '0%':   { opacity: '0', transform: 'scale(.95)' },
+              '100%': { opacity: '1', transform: 'scale(1)' }
+            },
+            slideLeft: {
+              '0%':   { transform: 'translateX(100%)' },
+              '100%': { transform: 'translateX(0)' }
+            },
+            slideIn: {
+              '0%':   { opacity: '0', transform: 'translateX(28px)' },
+              '100%': { opacity: '1', transform: 'translateX(0)' }
+            }
+          },
+          animation: {
+            fadeUp: 'fadeUp .5s ease-out both',
+            pop: 'pop .28s ease-out both',
+            slideLeft: 'slideLeft .35s cubic-bezier(.22,1,.36,1) both',
+            slideIn: 'slideIn .35s ease-out both'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { background-color: #020617; }
+    ::-webkit-scrollbar { width: 9px; height: 9px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+    .glass { background: rgba(15, 23, 42, .78); backdrop-filter: blur(14px); }
+    .grid-glow {
+      background-image: radial-gradient(circle at 15% 10%, rgba(245,158,11,.10), transparent 42%),
+                        radial-gradient(circle at 88% 75%, rgba(249,115,22,.09), transparent 45%);
+    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+
+<body class="font-sans text-slate-200 antialiased min-h-screen grid-glow">
+
+  <!-- ============================================================
+       STICKY NAVIGATION HEADER
+       ============================================================ -->
+  <header class="sticky top-0 z-40 glass border-b border-slate-800">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between gap-4">
+
+        <!-- Logo -->
+        <a href="#top" class="flex items-center gap-3 shrink-0">
+          <span class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-600/25">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0V9a4 4 0 0 0-8 0v4H5m0 0v4a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4M9 9h.01" />
+            </svg>
+          </span>
+          <span class="leading-tight">
+            <span class="block text-white font-extrabold tracking-tight text-lg">RideEase</span>
+            <span class="block text-[10px] uppercase tracking-[.18em] text-amber-500">Pre-Owned Bikes</span>
+          </span>
+        </a>
+
+        <!-- Nav links -->
+        <nav class="hidden md:flex items-center gap-1 text-sm font-semibold text-slate-400">
+          <a href="#showroom" class="rounded-lg px-4 py-2 transition hover:bg-slate-800/70 hover:text-white">Showroom</a>
+          <a href="#how" class="rounded-lg px-4 py-2 transition hover:bg-slate-800/70 hover:text-white">How It Works</a>
+          <a href="#contact" class="rounded-lg px-4 py-2 transition hover:bg-slate-800/70 hover:text-white">Contact</a>
+        </nav>
+
+        <!-- Floating cart button -->
+        <button id="cartBtn" type="button"
+          class="group relative inline-flex items-center gap-2.5 rounded-full border border-amber-500/50 bg-gradient-to-r from-amber-500/15 to-orange-600/15 px-4 sm:px-5 py-2.5 text-sm font-bold text-amber-400 shadow-lg shadow-amber-600/10 transition hover:border-amber-400 hover:from-amber-500 hover:to-orange-600 hover:text-slate-900 active:scale-95">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+          </svg>
+          <span class="hidden sm:inline">My Cart</span>
+          <span id="cartCount"
+            class="absolute -top-2 -right-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-orange-600 px-1.5 text-[11px] font-extrabold text-white shadow-lg shadow-orange-600/50 ring-2 ring-slate-950">
+            0
+          </span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ============================================================
+         HERO
+         ============================================================ -->
+    <section class="relative overflow-hidden">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div class="animate-fadeUp">
+            <span class="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-amber-400">
+              <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+              Verified Pre-Owned Inventory
+            </span>
+
+            <h1 class="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.08]">
+              Ride the <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">dream bike</span><br class="hidden sm:block" />
+              without the showroom price.
+            </h1>
+
+            <p class="mt-5 text-base sm:text-lg text-slate-400 max-w-xl leading-relaxed">
+              RideEase is a handpicked marketplace of premium pre-owned two-wheelers. Full inspection notes,
+              honest kilometres, transparent pricing - everything in one dark, distraction-free showroom.
+            </p>
+
+            <div class="mt-8 flex flex-wrap items-center gap-4">
+              <a href="#showroom"
+                class="rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-orange-600/25 transition hover:brightness-110 active:scale-95">
+                Browse the Showroom
+              </a>
+              <a href="#how"
+                class="rounded-xl border border-slate-700 bg-slate-900/60 px-6 py-3.5 text-sm font-bold text-slate-300 transition hover:border-amber-500 hover:text-amber-400">
+                How It Works
+              </a>
+            </div>
+
+            <div class="mt-10 grid grid-cols-3 gap-4 max-w-lg">
+              <div class="rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-4 text-center">
+                <p class="text-2xl font-extrabold text-white" id="statTotal">0</p>
+                <p class="text-[11px] uppercase tracking-wider text-slate-500 mt-1">Bikes Listed</p>
+              </div>
+              <div class="rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-4 text-center">
+                <p class="text-2xl font-extrabold text-white">100%</p>
+                <p class="text-[11px] uppercase tracking-wider text-slate-500 mt-1">Verified</p>
+              </div>
+              <div class="rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-4 text-center">
+                <p class="text-2xl font-extrabold text-white">0%</p>
+                <p class="text-[11px] uppercase tracking-wider text-slate-500 mt-1">Hidden Fees</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero visual -->
+          <div class="relative animate-fadeUp hidden lg:block">
+            <div class="rounded-3xl border border-slate-700/70 bg-gradient-to-br from-slate-900 to-slate-800 p-6 shadow-2xl shadow-black/50">
+              <div class="rounded-2xl bg-slate-800/70 border border-slate-700/60 overflow-hidden">
+                <img src="/images/bikes/bike_classic.svg" alt="Featured pre-owned bike" class="w-full h-64 object-cover" />
+              </div>
+              <div class="mt-5 flex items-center justify-between gap-4">
+                <div>
+                  <p class="text-white font-bold">Royal Enfield Classic 350</p>
+                  <p class="text-xs text-slate-400 mt-0.5">22,300 km &middot; Single owner</p>
+                </div>
+                <p class="text-xl font-extrabold text-amber-400">&#8377;1,48,500</p>
+              </div>
+            </div>
+            <div class="absolute -bottom-6 -left-6 rounded-2xl border border-amber-500/40 bg-slate-950/90 px-5 py-4 shadow-2xl shadow-black/60 animate-bounce">
+              <p class="text-[10px] uppercase tracking-widest text-slate-500">Inspection Passed</p>
+              <p class="text-sm font-bold text-emerald-400 mt-0.5">42-Point Checkup</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SHOWROOM GRID
+         ============================================================ -->
+    <section id="showroom" class="py-16 sm:py-20 border-t border-slate-800/70">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[.2em] text-amber-500">Live Inventory</p>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">The Showroom</h2>
+            <p class="mt-2 text-slate-400 text-sm sm:text-base">Every bike below is pulled live from the RideEase database.</p>
+          </div>
+          <button id="reloadBtn"
+            class="self-start sm:self-auto rounded-xl border border-slate-700 bg-slate-900/70 px-5 py-2.5 text-xs font-bold text-slate-300 transition hover:border-amber-500 hover:text-amber-400">
+            Refresh Inventory
+          </button>
+        </div>
+
+        <!-- Loading -->
+        <div id="loadingState" class="hidden py-20 text-center">
+          <svg class="animate-spin h-10 w-10 mx-auto text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z"></path>
+          </svg>
+          <p class="mt-4 text-sm text-slate-400">Loading the showroom...</p>
+        </div>
+
+        <!-- Empty -->
+        <div id="emptyState" class="hidden py-20 text-center">
+          <div class="mx-auto h-20 w-20 rounded-3xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h.375c.621 0 1.125-.504 1.125-1.125V11.25m0 0h-4.125c-.621 0-1.125-.504-1.125-1.125V5.25m0 0h-.75A2.25 2.25 0 0 0 9 3H6.75A2.25 2.25 0 0 0 4.5 5.25v6c0 .621.504 1.125 1.125 1.125H9" />
+            </svg>
+          </div>
+          <h3 class="mt-6 text-xl font-bold text-white">The showroom is empty</h3>
+          <p class="mt-2 text-sm text-slate-400">New arrivals are on the way. Check back in a little while.</p>
+        </div>
+
+        <!-- Grid -->
+        <div id="bikeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         HOW IT WORKS
+         ============================================================ -->
+    <section id="how" class="py-16 sm:py-20 border-t border-slate-800/70">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto">
+          <p class="text-xs font-bold uppercase tracking-[.2em] text-amber-500">Three Easy Steps</p>
+          <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">How RideEase Works</h2>
+          <p class="mt-3 text-slate-400 text-sm sm:text-base">From browsing to booking a deal, it takes less than a minute.</p>
+        </div>
+
+        <div class="mt-12 grid md:grid-cols-3 gap-6">
+          <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-7 transition hover:border-amber-500/50 hover:-translate-y-1">
+            <span class="h-12 w-12 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 text-lg font-extrabold">1</span>
+            <h3 class="mt-5 text-lg font-bold text-white">Browse the Showroom</h3>
+            <p class="mt-2 text-sm text-slate-400 leading-relaxed">Explore every pre-owned bike with its photo, price and kilometres driven in a single glance.</p>
+          </div>
+          <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-7 transition hover:border-amber-500/50 hover:-translate-y-1">
+            <span class="h-12 w-12 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 text-lg font-extrabold">2</span>
+            <h3 class="mt-5 text-lg font-bold text-white">Open Details &amp; Add to Cart</h3>
+            <p class="mt-2 text-sm text-slate-400 leading-relaxed">Click any card to read the full inspection notes, then drop the bike into your cart.</p>
+          </div>
+          <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-7 transition hover:border-amber-500/50 hover:-translate-y-1">
+            <span class="h-12 w-12 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 text-lg font-extrabold">3</span>
+            <h3 class="mt-5 text-lg font-bold text-white">Proceed to Deal Checkout</h3>
+            <p class="mt-2 text-sm text-slate-400 leading-relaxed">Review your total bill and confirm the deal. Our team calls you to finalise the paperwork.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CONTACT STRIP
+         ============================================================ -->
+    <section id="contact" class="py-16 border-t border-slate-800/70">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 to-orange-600/10 px-6 sm:px-10 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Interested in a bike?</h2>
+            <p class="mt-2 text-sm text-slate-400">Call the rental desk at <span class="text-amber-400 font-semibold">+91 98765 43210</span> or mail <span class="text-amber-400 font-semibold">support@rideease.local</span></p>
+          </div>
+          <a href="#showroom"
+            class="shrink-0 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-orange-600/25 transition hover:brightness-110 active:scale-95">
+            Back to Showroom
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="border-t border-slate-800 bg-slate-950/60">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="h-9 w-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0V9a4 4 0 0 0-8 0v4H5m0 0v4a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4M9 9h.01" />
+            </svg>
+          </span>
+          <span class="text-sm text-slate-400">&copy; 2026 RideEase &middot; Premium Pre-Owned Bikes</span>
+        </div>
+        <div class="flex items-center gap-5 text-xs text-slate-500">
+          <a href="#showroom" class="transition hover:text-amber-400">Showroom</a>
+          <a href="#how" class="transition hover:text-amber-400">How It Works</a>
+          <a href="#contact" class="transition hover:text-amber-400">Contact</a>
+          <a href="/admin.html" class="transition hover:text-amber-400">Admin</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       VEHICLE DETAILS MODAL (centered pop-up)
+       ============================================================ -->
+  <div id="detailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="detailBackdrop" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+    <div id="detailPanel" class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-slate-700/70 bg-slate-900 shadow-2xl shadow-black/70 animate-pop">
+      <button id="detailClose" type="button" aria-label="Close details"
+        class="absolute top-4 right-4 z-10 h-9 w-9 rounded-full border border-slate-700 bg-slate-950/80 text-slate-300 flex items-center justify-center transition hover:border-amber-500 hover:text-amber-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="rounded-t-3xl bg-slate-800 overflow-hidden">
+        <img id="detailImage" alt="" class="w-full h-56 sm:h-72 object-cover" />
+      </div>
+
+      <div class="p-6 sm:p-8">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-[.2em] text-amber-500">Vehicle Details</p>
+            <h3 id="detailTitle" class="mt-1.5 text-2xl sm:text-3xl font-extrabold text-white tracking-tight"></h3>
+          </div>
+          <p id="detailPrice" class="text-2xl font-extrabold text-amber-400"></p>
+        </div>
+
+        <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-center">
+            <p id="detailKm" class="text-base font-bold text-white"></p>
+            <p class="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">KM Driven</p>
+          </div>
+          <div class="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-center">
+            <p class="text-base font-bold text-white">Pre-Owned</p>
+            <p class="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">Condition</p>
+          </div>
+          <div class="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-center">
+            <p class="text-base font-bold text-white">Verified</p>
+            <p class="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">Inspection</p>
+          </div>
+          <div class="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-center">
+            <p id="detailId" class="text-base font-bold text-white"></p>
+            <p class="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">Listing ID</p>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <h4 class="text-xs font-bold uppercase tracking-[.2em] text-slate-400">Full Description</h4>
+          <p id="detailDesc" class="mt-2.5 text-sm sm:text-base text-slate-300 leading-relaxed"></p>
+        </div>
+
+        <div class="mt-7 flex flex-col sm:flex-row gap-3">
+          <button id="detailAddBtn" type="button"
+            class="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-5 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-orange-600/25 transition hover:brightness-110 active:scale-95">
+            Add to Cart
+          </button>
+          <button id="detailCloseBtn" type="button"
+            class="rounded-xl border border-slate-700 bg-slate-950/60 px-5 py-3.5 text-sm font-bold text-slate-300 transition hover:border-slate-500 hover:text-white">
+            Keep Browsing
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SHOPPING CART (slide-out overlay)
+       ============================================================ -->
+  <div id="cartOverlay" class="hidden fixed inset-0 z-50">
+    <div id="cartBackdrop" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+
+    <aside id="cartPanel"
+      class="absolute top-0 right-0 h-full w-full sm:w-[420px] border-l border-slate-700/70 bg-slate-900 shadow-2xl shadow-black/70 flex flex-col animate-slideLeft">
+
+      <!-- Cart header -->
+      <div class="flex items-center justify-between px-6 py-5 border-b border-slate-800 bg-gradient-to-r from-amber-500/10 to-orange-600/5">
+        <div class="flex items-center gap-3">
+          <span class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-slate-900">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+            </svg>
+          </span>
+          <div>
+            <h2 class="font-extrabold text-white leading-tight">Your Cart</h2>
+            <p class="text-[11px] uppercase tracking-widest text-amber-500"><span id="cartQty">0</span> item(s) selected</p>
+          </div>
+        </div>
+        <button id="cartClose" type="button" aria-label="Close cart"
+          class="h-9 w-9 rounded-full border border-slate-700 bg-slate-950/70 text-slate-300 flex items-center justify-center transition hover:border-amber-500 hover:text-amber-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Cart items -->
+      <div id="cartItems" class="flex-1 overflow-y-auto px-5 py-5 space-y-4"></div>
+
+      <!-- Cart empty state -->
+      <div id="cartEmpty" class="flex-1 flex flex-col items-center justify-center px-8 text-center">
+        <div class="h-20 w-20 rounded-3xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+          </svg>
+        </div>
+        <h3 class="mt-6 font-bold text-white">Your cart is empty</h3>
+        <p class="mt-2 text-sm text-slate-400">Add a bike from the showroom and it will show up here.</p>
+        <button id="cartEmptyBrowse" type="button"
+          class="mt-6 rounded-xl border border-amber-500/50 bg-amber-500/10 px-5 py-3 text-sm font-bold text-amber-400 transition hover:bg-amber-500 hover:text-slate-900">
+          Browse Showroom
+        </button>
+      </div>
+
+      <!-- Cart footer : total + checkout -->
+      <div id="cartFooter" class="hidden border-t border-slate-800 bg-slate-950/70 px-6 py-5 space-y-4">
+        <div class="flex items-center justify-between text-sm text-slate-400">
+          <span>Items</span>
+          <span id="footerQty">0</span>
+        </div>
+        <div class="flex items-center justify-between text-sm text-slate-400">
+          <span>Handling</span>
+          <span class="text-emerald-400 font-semibold">Free</span>
+        </div>
+        <div class="h-px bg-slate-800"></div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-bold uppercase tracking-wider text-slate-300">Total Bill</span>
+          <span id="totalBill" class="text-2xl font-extrabold text-amber-400">&#8377;0</span>
+        </div>
+        <button id="checkoutBtn" type="button"
+          class="w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-5 py-4 text-sm font-extrabold text-slate-900 shadow-lg shadow-orange-600/25 transition hover:brightness-110 active:scale-95">
+          Proceed to Deal Checkout
+        </button>
+        <button id="clearCartBtn" type="button"
+          class="w-full rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 text-xs font-bold text-slate-400 transition hover:border-red-500/60 hover:text-red-400">
+          Empty Cart
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ============================================================
+       TOAST
+       ============================================================ -->
+  <div id="toastWrap" class="fixed bottom-6 right-6 z-[60] flex flex-col gap-3 items-end"></div>
+
+  <script>
+    /* ================= helpers ================= */
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function money(amount) {
+      return '&#8377;' + Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+
+    function moneyPlain(amount) {
+      return '\u20B9' + Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+
+    function toast(message, type = 'success') {
+      const colors = type === 'error'
+        ? 'border-red-500/50 bg-red-500/15 text-red-200'
+        : 'border-emerald-500/50 bg-emerald-500/15 text-emerald-200';
+      const el = document.createElement('div');
+      el.className = `animate-slideIn pointer-events-auto rounded-xl border ${colors} px-4 py-3 text-sm font-medium shadow-2xl shadow-black/50 backdrop-blur`;
+      el.textContent = message;
+      $('toastWrap').appendChild(el);
+      setTimeout(() => {
+        el.style.transition = 'opacity .4s, transform .4s';
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(28px)';
+        setTimeout(() => el.remove(), 420);
+      }, 3000);
+    }
+
+    /* ================= inventory state ================= */
+    let bikes = [];
+
+    async function loadBikes() {
+      const grid = $('bikeGrid');
+      $('loadingState').classList.remove('hidden');
+      $('emptyState').classList.add('hidden');
+      grid.innerHTML = '';
+
+      try {
+        const res = await fetch('/api/bikes');
+        const data = await res.json();
+        bikes = data.bikes || [];
+
+        $('statTotal').textContent = bikes.length;
+
+        if (bikes.length === 0) {
+          $('emptyState').classList.remove('hidden');
+          return;
+        }
+
+        grid.innerHTML = bikes.map((bike) => {
+          const inCart = cart.some((item) => item.id === bike.id);
+          return `
+          <article data-bike-id="${escapeHtml(bike.id)}"
+            class="group animate-fadeUp cursor-pointer rounded-3xl border border-slate-800 bg-slate-900/70 overflow-hidden transition hover:border-amber-500/60 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black/50">
+            <div class="relative h-48 bg-slate-800 overflow-hidden">
+              <img src="${escapeHtml(bike.image_url)}" alt="${escapeHtml(bike.title)}"
+                   class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+              <span class="absolute top-3 left-3 rounded-full bg-slate-950/80 border border-slate-700 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-300">
+                Pre-Owned
+              </span>
+              <span class="absolute top-3 right-3 rounded-full bg-emerald-500/15 border border-emerald-500/40 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                Available
+              </span>
+            </div>
+
+            <div class="p-5">
+              <h3 class="text-lg font-bold text-white leading-snug truncate">${escapeHtml(bike.title)}</h3>
+              <p class="mt-1 text-xs text-slate-500">Listing #${escapeHtml(bike.id)} &middot; Verified seller</p>
+
+              <div class="mt-4 flex items-center justify-between">
+                <p class="text-xl font-extrabold text-amber-400">${money(bike.price)}</p>
+                <p class="text-xs text-slate-400">
+                  <span class="font-bold text-slate-200">${Number(bike.km_driven).toLocaleString('en-IN')}</span> km driven
+                </p>
+              </div>
+
+              <div class="mt-5 flex gap-2.5">
+                <button type="button" data-action="details" data-id="${escapeHtml(bike.id)}"
+                  class="flex-1 rounded-xl border border-slate-700 bg-slate-950/60 px-3 py-2.5 text-xs font-bold text-slate-300 transition hover:border-slate-500 hover:text-white">
+                  View Details
+                </button>
+                <button type="button" data-action="add" data-id="${escapeHtml(bike.id)}"
+                  class="flex-1 rounded-xl px-3 py-2.5 text-xs font-bold transition active:scale-95 ${inCart
+                    ? 'border border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
+                    : 'bg-gradient-to-r from-amber-500 to-orange-600 text-slate-900 shadow-lg shadow-orange-600/20 hover:brightness-110'}">
+                  ${inCart ? 'In Cart ✓' : 'Add to Cart'}
+                </button>
+              </div>
+            </div>
+          </article>`;
+        }).join('');
+      } catch (err) {
+        $('bikeGrid').innerHTML = `
+          <div class="col-span-full rounded-3xl border border-red-500/40 bg-red-500/10 px-6 py-10 text-center">
+            <p class="font-bold text-red-300">Could not load the showroom.</p>
+            <p class="text-sm text-red-300/70 mt-1">Make sure server.js is running and MySQL is online.</p>
+          </div>`;
+      } finally {
+        $('loadingState').classList.add('hidden');
+      }
+    }
+
+    /* ================= cart state ================= */
+    let cart = [];
+    try {
+      const saved = localStorage.getItem('rideease_cart');
+      if (saved) cart = JSON.parse(saved) || [];
+    } catch (e) {
+      cart = [];
+    }
+
+    function persistCart() {
+      try {
+        localStorage.setItem('rideease_cart', JSON.stringify(cart));
+      } catch (e) { /* storage unavailable - cart stays in memory */ }
+    }
+
+    function cartTotal() {
+      return cart.reduce((sum, item) => sum + Number(item.price), 0);
+    }
+
+    function addToCart(bike) {
+      if (cart.some((item) => item.id === bike.id)) {
+        toast(`"${bike.title}" is already in your cart.`, 'error');
+        openCart();
+        return;
+      }
+      cart.push({ ...bike });
+      persistCart();
+      renderCart();
+      refreshAddButtons();
+      toast(`"${bike.title}" added to your cart.`);
+    }
+
+    function removeFromCart(id) {
+      const item = cart.find((i) => i.id === id);
+      cart = cart.filter((i) => i.id !== id);
+      persistCart();
+      renderCart();
+      refreshAddButtons();
+      if (item) toast(`"${item.title}" removed from cart.`, 'error');
+    }
+
+    function refreshAddButtons() {
+      document.querySelectorAll('[data-action="add"]').forEach((btn) => {
+        const id = Number(btn.dataset.id);
+        const inCart = cart.some((item) => item.id === id);
+        btn.className = `flex-1 rounded-xl px-3 py-2.5 text-xs font-bold transition active:scale-95 ${inCart
+          ? 'border border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
+          : 'bg-gradient-to-r from-amber-500 to-orange-600 text-slate-900 shadow-lg shadow-orange-600/20 hover:brightness-110'}`;
+        btn.textContent = inCart ? 'In Cart ✓' : 'Add to Cart';
+      });
+
+      const detailBtn = $('detailAddBtn');
+      const detailId = Number(detailBtn.dataset.id || 0);
+      if (detailId) {
+        const inCart = cart.some((item) => item.id === detailId);
+        detailBtn.textContent = inCart ? 'Already in Cart ✓' : 'Add to Cart';
+      }
+    }
+
+    function renderCart() {
+      const qty = cart.length;
+      $('cartCount').textContent = qty;
+      $('cartQty').textContent = qty;
+      $('footerQty').textContent = qty;
+      $('totalBill').textContent = moneyPlain(cartTotal());
+
+      const empty = $('cartEmpty');
+      const items = $('cartItems');
+      const footer = $('cartFooter');
+
+      if (qty === 0) {
+        empty.classList.remove('hidden');
+        items.classList.add('hidden');
+        footer.classList.add('hidden');
+        items.innerHTML = '';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      items.classList.remove('hidden');
+      footer.classList.remove('hidden');
+
+      items.innerHTML = cart.map((item) => `
+        <div class="animate-fadeUp rounded-2xl border border-slate-800 bg-slate-950/60 p-3 flex gap-3.5">
+          <div class="h-20 w-24 shrink-0 rounded-xl bg-slate-800 overflow-hidden">
+            <img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" class="h-full w-full object-cover" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2">
+              <h4 class="text-sm font-bold text-white truncate">${escapeHtml(item.title)}</h4>
+              <button type="button" data-remove="${escapeHtml(item.id)}" aria-label="Remove item"
+                class="shrink-0 h-7 w-7 rounded-lg border border-slate-700 text-slate-400 flex items-center justify-center transition hover:border-red-500 hover:text-red-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <p class="mt-1 text-[11px] text-slate-500">${Number(item.km_driven).toLocaleString('en-IN')} km driven</p>
+            <p class="mt-2 text-base font-extrabold text-amber-400">${money(item.price)}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* ================= detail modal ================= */
+    let currentDetailId = 0;
+
+    function openDetails(bike) {
+      currentDetailId = bike.id;
+      $('detailImage').src = bike.image_url;
+      $('detailImage').alt = bike.title;
+      $('detailTitle').textContent = bike.title;
+      $('detailPrice').innerHTML = money(bike.price);
+      $('detailKm').textContent = Number(bike.km_driven).toLocaleString('en-IN');
+      $('detailId').textContent = '#' + bike.id;
+      $('detailDesc').textContent = bike.description;
+      $('detailAddBtn').dataset.id = bike.id;
+      $('detailAddBtn').textContent = cart.some((i) => i.id === bike.id) ? 'Already in Cart ✓' : 'Add to Cart';
+
+      $('detailModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDetails() {
+      $('detailModal').classList.add('hidden');
+      if ($('cartOverlay').classList.contains('hidden')) {
+        document.body.style.overflow = '';
+      }
+    }
+
+    /* ================= cart overlay ================= */
+    function openCart() {
+      $('cartOverlay').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCart() {
+      $('cartOverlay').classList.add('hidden');
+      if ($('detailModal').classList.contains('hidden')) {
+        document.body.style.overflow = '';
+      }
+    }
+
+    /* ================= events ================= */
+    $('bikeGrid').addEventListener('click', (e) => {
+      const actionBtn = e.target.closest('[data-action]');
+      if (actionBtn) {
+        const bike = bikes.find((b) => b.id === Number(actionBtn.dataset.id));
+        if (!bike) return;
+        if (actionBtn.dataset.action === 'add') addToCart(bike);
+        if (actionBtn.dataset.action === 'details') openDetails(bike);
+        return;
+      }
+
+      const card = e.target.closest('[data-bike-id]');
+      if (card) {
+        const bike = bikes.find((b) => b.id === Number(card.dataset.bikeId));
+        if (bike) openDetails(bike);
+      }
+    });
+
+    $('cartItems').addEventListener('click', (e) => {
+      const removeBtn = e.target.closest('[data-remove]');
+      if (removeBtn) removeFromCart(Number(removeBtn.dataset.remove));
+    });
+
+    $('detailAddBtn').addEventListener('click', () => {
+      const bike = bikes.find((b) => b.id === Number($('detailAddBtn').dataset.id));
+      if (bike) addToCart(bike);
+    });
+
+    $('detailClose').addEventListener('click', closeDetails);
+    $('detailCloseBtn').addEventListener('click', closeDetails);
+    $('detailBackdrop').addEventListener('click', closeDetails);
+
+    $('cartBtn').addEventListener('click', openCart);
+    $('cartClose').addEventListener('click', closeCart);
+    $('cartBackdrop').addEventListener('click', closeCart);
+
+    $('cartEmptyBrowse').addEventListener('click', () => {
+      closeCart();
+      document.getElementById('showroom').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    $('clearCartBtn').addEventListener('click', () => {
+      if (cart.length === 0) return;
+      cart = [];
+      persistCart();
+      renderCart();
+      refreshAddButtons();
+      toast('Your cart has been emptied.', 'error');
+    });
+
+    $('checkoutBtn').addEventListener('click', () => {
+      if (cart.length === 0) {
+        toast('Add at least one bike before checking out.', 'error');
+        return;
+      }
+
+      const bill = moneyPlain(cartTotal());
+      const count = cart.length;
+      const names = cart.map((item) => item.title).join(', ');
+
+      alert(
+        'DEAL CHECKOUT SUCCESSFUL!\n\n' +
+        'Bikes reserved : ' + count + '\n' +
+        'Total Bill     : ' + bill + '\n\n' +
+        'Selected : ' + names + '\n\n' +
+        'Thank you for shopping with RideEase!\n' +
+        'Our team will call you shortly to finalise the paperwork.'
+      );
+
+      cart = [];
+      persistCart();
+      renderCart();
+      refreshAddButtons();
+      closeCart();
+      toast('Order placed successfully. We will call you soon!');
+    });
+
+    $('reloadBtn').addEventListener('click', () => {
+      loadBikes();
+      toast('Inventory refreshed.');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDetails();
+        closeCart();
+      }
+    });
+
+    /* ================= boot ================= */
+    renderCart();
+    loadBikes();
+  </script>
+</body>
+</html>

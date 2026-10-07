@@ -23,7 +23,14 @@ Desktop.ini
 notes.txt
 TODO.txt
 
-# NOTE: config/database.php IS tracked - it only contains the
-# standard XAMPP defaults (root / empty password). If you change
-# it for a real deployment, consider ignoring it and committing
-# a config/database.php.example instead.
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Images uploaded through the admin dashboard (keep the folder itself)
+uploads/*
+!uploads/.gitkeep
+
+# Local environment overrides
+.env
+.env.local
