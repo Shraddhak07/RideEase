@@ -18,6 +18,11 @@ Desktop.ini
 *.log
 *.tmp
 /error_log
+/node_modules/
+/.env
+/.env.*
+!.env.example
+npm-debug.log*
 
 # Local development notes (not part of the project)
 notes.txt

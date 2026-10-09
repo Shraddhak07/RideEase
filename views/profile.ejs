@@ -1,0 +1,19 @@
+<%- include('partials/head', { title, active, currentUser, flashMessages }) %>
+<section class="account-page">
+  <div class="container">
+    <div class="welcome-row"><div><span class="eyebrow">THE DETAILS</span><h1>Your <em>profile.</em></h1><p>Keep your account up to date.</p></div><a class="text-link" href="/dashboard"><i class="bi bi-arrow-left"></i> Back to dashboard</a></div>
+    <div class="profile-layout">
+      <aside class="panel-card profile-summary"><div class="profile-large-avatar"><%= profile.full_name.charAt(0).toUpperCase() %></div><h2><%= profile.full_name %></h2><p><%= profile.email %></p><div class="profile-meta"><span><i class="bi bi-telephone"></i><%= profile.phone %></span><span><i class="bi bi-shield-check"></i> Account <strong><%= profile.status %></strong></span><span><i class="bi bi-calendar3"></i> Member since <%= new Date(profile.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) %></span></div></aside>
+      <section class="panel-card profile-edit"><span class="eyebrow">ACCOUNT SETTINGS</span><h2>Personal details</h2>
+        <% if (errors.length) { %><div class="alert alert-danger"><ul class="mb-0"><% errors.forEach((error) => { %><li><%= error %></li><% }); %></ul></div><% } %>
+        <form action="/profile" method="post">
+          <div class="row g-3"><div class="col-md-6"><label class="form-label" for="name">Full name</label><input class="form-control" id="name" name="name" value="<%= profile.full_name %>" maxlength="100" required></div><div class="col-md-6"><label class="form-label" for="email">Email address</label><input class="form-control" id="email" type="email" value="<%= profile.email %>" disabled><span class="form-hint">Email is your sign-in and can't be changed.</span></div><div class="col-md-6"><label class="form-label" for="phone">Phone number</label><input class="form-control" id="phone" name="phone" type="tel" value="<%= profile.phone %>" maxlength="20" required></div></div>
+          <hr><div class="password-heading"><div><span class="eyebrow">OPTIONAL</span><h3>Change password</h3></div><i class="bi bi-lock"></i></div>
+          <div class="row g-3"><div class="col-md-4"><label class="form-label" for="currentPassword">Current password</label><input class="form-control" id="currentPassword" name="currentPassword" type="password" autocomplete="current-password"></div><div class="col-md-4"><label class="form-label" for="newPassword">New password</label><input class="form-control" id="newPassword" name="newPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password"></div><div class="col-md-4"><label class="form-label" for="confirmPassword">Confirm new password</label><input class="form-control" id="confirmPassword" name="confirmPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password"></div></div>
+          <button class="btn btn-dark rounded-pill profile-save" type="submit">Save changes <i class="bi bi-arrow-right ms-2"></i></button>
+        </form>
+      </section>
+    </div>
+  </div>
+</section>
+<%- include('partials/footer') %>

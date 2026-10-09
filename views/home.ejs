@@ -1,0 +1,53 @@
+<%- include('partials/head', { title, active, currentUser, flashMessages }) %>
+<section class="hero-section">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow hero-kicker"><span class="live-dot"></span> YOUR CITY, YOUR WAY</div>
+      <h1>Good days<br>start <em>with a ride.</em></h1>
+      <p>From quick city hops to weekends out of town, find the ride that fits your plans.</p>
+      <div class="hero-actions">
+        <a class="btn btn-lime btn-lg rounded-pill" href="/vehicles">Find your ride <i class="bi bi-arrow-up-right ms-2"></i></a>
+        <span class="hero-note"><i class="bi bi-shield-check"></i> Easy booking. No surprises.</span>
+      </div>
+      <div class="hero-stats">
+        <div><strong>12<span>+</span></strong><small>rides to choose from</small></div>
+        <div><strong>2</strong><small>ways to get moving</small></div>
+        <div><strong>24<span>/7</span></strong><small>freedom to explore</small></div>
+      </div>
+    </div>
+    <div class="hero-art" aria-label="Illustration of a car and scooter on an open road">
+      <div class="hero-sun"></div><div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+      <div class="hero-caption"><span>THE OPEN ROAD</span><i class="bi bi-arrow-up-right"></i></div>
+      <div class="road"></div>
+      <div class="art-car"><i class="bi bi-car-front-fill"></i><span class="wheel wheel-one"></span><span class="wheel wheel-two"></span></div>
+      <div class="art-bike"><i class="bi bi-bicycle"></i></div>
+      <div class="art-tag"><span class="tag-icon"><i class="bi bi-lightning-charge-fill"></i></span><span><strong>Pick a ride.</strong><small>Make it a day.</small></span></div>
+    </div>
+  </div>
+  <div class="container search-panel">
+    <form action="/vehicles" method="get" class="search-form">
+      <label class="search-field"><span><i class="bi bi-search"></i> FIND YOUR RIDE</span><input type="search" name="q" placeholder="Try “Swift” or “Honda”"></label>
+      <label class="search-field search-select"><span><i class="bi bi-grid"></i> VEHICLE TYPE</span><select name="type"><option value="">All rides</option><option value="Car">Cars</option><option value="Bike">Bikes</option></select></label>
+      <button class="btn btn-dark rounded-pill search-submit" type="submit">Explore rides <i class="bi bi-arrow-right ms-2"></i></button>
+    </form>
+  </div>
+</section>
+<section class="section section-featured">
+  <div class="container">
+    <div class="section-heading">
+      <div><span class="eyebrow">THE FLEET</span><h2>Ready when you are.</h2><p>Handpicked rides for every kind of day.</p></div>
+      <a class="text-link" href="/vehicles">See all vehicles <i class="bi bi-arrow-up-right"></i></a>
+    </div>
+    <div class="vehicle-grid">
+      <% vehicles.forEach((vehicle) => { %><%- include('partials/vehicle-card', { vehicle }) %><% }); %>
+    </div>
+  </div>
+</section>
+<section class="journey-band">
+  <div class="container journey-inner">
+    <div><span class="eyebrow">LESS PLANNING. MORE GOING.</span><h2>One small booking.<br><em>A whole lot of somewhere.</em></h2></div>
+    <a href="/vehicles" class="btn btn-lime rounded-pill">Let's go <i class="bi bi-arrow-up-right ms-2"></i></a>
+    <div class="journey-spark"><i class="bi bi-sun-fill"></i></div>
+  </div>
+</section>
+<%- include('partials/footer') %>

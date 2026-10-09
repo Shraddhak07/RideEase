@@ -1,0 +1,33 @@
+<header class="site-header">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <span class="brand-mark"><i class="bi bi-arrow-up-right"></i></span>
+        rideease<span class="brand-period">.</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNavigation" aria-controls="siteNavigation" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="siteNavigation">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link <%= active === 'home' ? 'active' : '' %>" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link <%= active === 'vehicles' ? 'active' : '' %>" href="/vehicles">Explore rides</a></li>
+          <% if (currentUser) { %>
+            <li class="nav-item"><a class="nav-link <%= active === 'dashboard' ? 'active' : '' %>" href="/dashboard">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link <%= active === 'bookings' ? 'active' : '' %>" href="/bookings">My bookings</a></li>
+          <% } %>
+        </ul>
+        <div class="nav-actions">
+          <% if (currentUser) { %>
+            <a class="nav-account" href="/profile"><span class="avatar"><%= currentUser.full_name.charAt(0).toUpperCase() %></span><span><%= currentUser.full_name.split(' ')[0] %></span></a>
+            <form action="/logout" method="post"><button class="btn btn-quiet" type="submit">Log out</button></form>
+          <% } else { %>
+            <a class="btn btn-quiet" href="/login">Log in</a>
+            <a class="btn btn-dark rounded-pill px-4" href="/register">Create account <i class="bi bi-arrow-up-right ms-1"></i></a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<main>

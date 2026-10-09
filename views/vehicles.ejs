@@ -1,0 +1,24 @@
+<%- include('partials/head', { title, active, currentUser, flashMessages }) %>
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">THE RIDE IS YOURS</span>
+    <div class="page-title-row"><div><h1>Find your <em>kind of ride.</em></h1><p>Choose a vehicle. Pick your dates. Get out there.</p></div><span class="result-count"><strong><%= vehicles.length %></strong> rides available</span></div>
+    <form class="fleet-filters" action="/vehicles" method="get">
+      <label class="filter-search"><i class="bi bi-search"></i><input type="search" name="q" value="<%= search %>" placeholder="Search by vehicle or brand"></label>
+      <label><span>Vehicle type</span><select name="type"><option value="">All rides</option><option value="Car" <%= type === 'Car' ? 'selected' : '' %>>Cars</option><option value="Bike" <%= type === 'Bike' ? 'selected' : '' %>>Bikes</option></select></label>
+      <button class="btn btn-dark rounded-pill" type="submit">Show rides <i class="bi bi-arrow-right ms-1"></i></button>
+    </form>
+  </div>
+</section>
+<section class="section fleet-section">
+  <div class="container">
+    <% if (vehicles.length) { %>
+      <div class="vehicle-grid">
+        <% vehicles.forEach((vehicle) => { %><%- include('partials/vehicle-card', { vehicle }) %><% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state"><span class="empty-icon"><i class="bi bi-search"></i></span><h2>No rides found</h2><p>Try another search or clear your filters to see all available vehicles.</p><a href="/vehicles" class="btn btn-dark rounded-pill">Clear filters</a></div>
+    <% } %>
+  </div>
+</section>
+<%- include('partials/footer') %>

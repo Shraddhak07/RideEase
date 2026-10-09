@@ -1,0 +1,19 @@
+<%- include('partials/head', { title, active, currentUser, flashMessages }) %>
+<section class="account-page">
+  <div class="container">
+    <div class="welcome-row"><div><span class="eyebrow">THE GOOD, THE GREAT, THE UPCOMING</span><h1>Your <em>bookings.</em></h1><p>Every ride and plan, all in one place.</p></div><a class="btn btn-lime rounded-pill" href="/vehicles">Find a new ride <i class="bi bi-arrow-up-right ms-1"></i></a></div>
+    <% if (bookings.length) { %>
+      <section class="panel-card booking-table-panel"><div class="table-responsive"><table class="table booking-table align-middle mb-0"><thead><tr><th>RIDE</th><th>DATES</th><th>AMOUNT</th><th>PAYMENT</th><th>STATUS</th><th></th></tr></thead><tbody>
+      <% bookings.forEach((booking) => { %>
+        <tr><td><div class="table-ride"><span class="booking-avatar"><i class="bi <%= booking.type === 'Bike' ? 'bi-bicycle' : 'bi-car-front' %>"></i></span><span><strong><%= booking.brand %> <%= booking.model %></strong><small>Booking #<%= booking.booking_id %></small></span></div></td><td><%= booking.pickup_date %><span class="date-arrow"> → </span><%= booking.return_date %></td><td><strong><%= formatMoney(booking.total_amount) %></strong></td><td><span class="status-pill <%= statusClass(booking.payment_status || 'Pending') %>"><%= booking.payment_status || 'Pending' %></span></td><td><span class="status-pill <%= statusClass(booking.booking_status) %>"><%= booking.booking_status %></span></td><td class="text-end">
+          <% if (['Pending', 'Confirmed'].includes(booking.booking_status)) { %><form method="post" action="/bookings/<%= booking.booking_id %>/cancel" data-confirm="Cancel this booking? Any paid amount will be marked for refund."><button class="btn btn-cancel" type="submit">Cancel</button></form><% } %>
+        </td></tr>
+      <% }); %>
+      </tbody></table></div></section>
+      <p class="booking-footnote"><i class="bi bi-info-circle"></i> Pending and confirmed bookings can be cancelled. Any paid demo payment will be marked refunded.</p>
+    <% } else { %>
+      <div class="empty-state"><span class="empty-icon"><i class="bi bi-calendar-heart"></i></span><h2>Your story starts here.</h2><p>Once you book your first ride, you'll find all your trip details here.</p><a class="btn btn-dark rounded-pill" href="/vehicles">Explore vehicles <i class="bi bi-arrow-right ms-2"></i></a></div>
+    <% } %>
+  </div>
+</section>
+<%- include('partials/footer') %>

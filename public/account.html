@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RideEase | Account</title>
+  <meta name="description" content="Create a RideEase customer or seller account.">
+  <link rel="stylesheet" href="/portal.css">
+  <link rel="stylesheet" href="/polish.css">
+  <script defer src="/portal.js"></script>
+</head>
+<body class="account-page">
+  <header class="site-header">
+    <a class="brand" href="/"><span class="brand-mark">R</span><span>RideEase<small>Find your next ride</small></span></a>
+    <nav><a href="/">Marketplace</a><a href="/admin">Admin</a></nav>
+    <button class="button button-quiet hidden" id="logoutButton" type="button">Sign out</button>
+  </header>
+  <main class="account-shell">
+    <section id="authSection" class="auth-layout">
+      <div class="auth-intro"><span class="eyebrow">A COMMUNITY IN MOTION</span><h1>Make room for<br><em>your next ride.</em></h1><p>Sign in to book a vehicle or create a seller account to list one.</p><a href="/">← Back to marketplace</a></div>
+      <div class="panel auth-panel">
+        <div class="tab-row"><button class="tab active" id="showLogin" type="button">Log in</button><button class="tab" id="showRegister" type="button">Create account</button></div>
+        <form id="loginForm" class="form-stack">
+          <label>Account type<select name="role" id="loginRole"><option value="customer">Customer</option><option value="seller">Seller</option></select></label>
+          <label>Email<input type="email" name="email" autocomplete="email" required></label>
+          <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+          <p class="form-error" id="loginError" role="alert"></p>
+          <button class="button button-primary button-full" type="submit">Log in</button>
+        </form>
+        <form id="registerForm" class="form-stack hidden">
+          <label>I want to<select name="role" id="registerRole"><option value="customer">Rent vehicles</option><option value="seller">List my vehicle</option></select></label>
+          <label>Your name<input type="text" name="name" minlength="2" maxlength="100" autocomplete="name" required></label>
+          <label>Email<input type="email" name="email" maxlength="254" autocomplete="email" required></label>
+          <label>Password<input type="password" name="password" minlength="8" maxlength="72" autocomplete="new-password" required><small>Use at least 8 characters.</small></label>
+          <p class="form-error" id="registerError" role="alert"></p>
+          <button class="button button-primary button-full" type="submit">Create account</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="workspace" class="hidden">
+      <div class="welcome-row"><div><span class="eyebrow" id="workspaceEyebrow">YOUR RIDE EASE</span><h1>Welcome, <em id="userName"></em></h1><p id="workspaceDescription"></p></div><a class="button button-quiet" href="/">Browse marketplace <span aria-hidden="true">↗</span></a></div>
+      <section class="seller-banner hidden" id="sellerBanner"><div class="seller-banner-copy"><span class="eyebrow">YOUR GARAGE, YOUR RULES</span><h2>A better way to put<br>your ride <em>to work.</em></h2><p>Share your vehicle with riders nearby. Set your price, send it for review, and track every listing right here.</p><a href="#sellerPanel" class="button button-light">Create a listing <span aria-hidden="true">↓</span></a></div><div class="seller-banner-art" aria-hidden="true"><span class="banner-orbit"></span><img src="/images/bikes/bike_fzs.jpg" alt=""><span class="seller-banner-tag">LIST IT.<br>RIDE ON.</span></div><div class="seller-stats"><div><strong id="sellerTotalCount">0</strong><span>Total listings</span></div><div><strong id="sellerPendingCount">0</strong><span>In review</span></div><div><strong id="sellerApprovedCount">0</strong><span>Published</span></div></div></section>
+      <div class="workspace-grid">
+        <section class="panel hidden" id="sellerPanel">
+          <div class="panel-heading"><div><span class="eyebrow">ADD SOMETHING SPECIAL</span><h2>List your vehicle</h2><p>Share the details riders need. Your post goes live after a quick review.</p></div><span class="panel-step">01 <i>—</i> 02</span></div>
+          <form id="listingForm" class="form-stack" enctype="multipart/form-data">
+            <label class="field-label">Vehicle name<input name="title" maxlength="150" required placeholder="e.g. Honda Activa 6G"><small>Make it easy for a rider to recognise.</small></label>
+            <div class="date-grid listing-numbers"><label class="field-label">Price per day <span class="input-prefix">₹<input name="price" type="number" min="1" max="10000000" step="1" required placeholder="750"></span></label><label class="field-label">Kilometres driven<input name="km_driven" type="number" min="0" max="10000000" step="1" required placeholder="12000"></label></div>
+            <label class="field-label">A little about your vehicle<textarea name="description" minlength="10" maxlength="5000" rows="4" required placeholder="Tell riders about the condition, recent servicing, and anything that makes it a great ride…"></textarea><small>At least 10 characters. Clear details help build trust.</small></label>
+            <div class="field-label photo-field"><span>Make it picture perfect</span><label class="photo-drop" for="listingPhoto"><span class="upload-icon" aria-hidden="true">↑</span><span class="photo-drop-copy"><strong id="photoFileName">Choose your best photo</strong><small>JPG, PNG or WebP · Up to 5 MB</small></span><span class="button button-quiet photo-browse">Browse files</span><input id="listingPhoto" name="image" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required></label><div class="photo-preview hidden" id="photoPreviewWrap"><img id="photoPreview" alt="Selected vehicle photo preview"><div><strong>Looking good.</strong><span id="photoPreviewName"></span></div><button class="preview-remove" id="removePhoto" type="button" aria-label="Remove selected photo">×</button></div></div>
+            <p class="form-error" id="listingError" role="alert"></p><p class="success-message" id="listingSuccess" role="status"></p>
+            <button class="button button-primary submit-listing" type="submit"><span>Send for review</span><span aria-hidden="true">↗</span></button><p class="approval-note"><span aria-hidden="true">✳</span> Your listing stays private until our team approves it.</p>
+          </form>
+        </section>
+        <section class="panel">
+          <div class="panel-heading"><div><span class="eyebrow" id="itemsEyebrow">YOUR ACTIVITY</span><h2 id="itemsHeading">Your activity</h2><p id="itemsDescription"></p></div><button class="button button-quiet button-small" id="refreshWorkspace" type="button">Refresh</button></div>
+          <div class="activity-list" id="activityList"><p class="empty-state">Loading…</p></div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <footer>© 2026 RideEase <span>Demo app. No real payments are processed.</span><a href="/admin">Admin sign in</a></footer>
+</body>
+</html>

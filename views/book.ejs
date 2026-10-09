@@ -1,0 +1,26 @@
+<%- include('partials/head', { title, active, currentUser, flashMessages }) %>
+<section class="account-page booking-page">
+  <div class="container">
+    <a class="text-link back-link" href="/vehicles"><i class="bi bi-arrow-left"></i> All vehicles</a>
+    <div class="booking-layout">
+      <section class="panel-card reserve-form">
+        <span class="eyebrow">MAKE IT OFFICIAL</span><h1>Book your <em>ride.</em></h1><p class="form-intro">Pick your dates and we'll take care of the rest.</p>
+        <% if (errors.length) { %><div class="alert alert-danger"><ul class="mb-0"><% errors.forEach((error) => { %><li><%= error %></li><% }); %></ul></div><% } %>
+        <form action="/vehicles/<%= vehicle.vehicle_id %>/book" method="post" class="booking-calc" data-price-per-day="<%= vehicle.rent_per_day %>" data-deposit="<%= vehicle.security_deposit %>">
+          <div class="date-fields"><div><label class="form-label" for="pickupDate">Pickup date</label><input class="form-control" type="date" id="pickupDate" name="pickupDate" data-min-today value="<%= values.pickupDate || '' %>" required></div><div><label class="form-label" for="returnDate">Return date</label><input class="form-control" type="date" id="returnDate" name="returnDate" data-min-today value="<%= values.returnDate || '' %>" required></div></div>
+          <label class="form-label mt-4" for="paymentMethod">Payment method</label><select class="form-select" id="paymentMethod" name="paymentMethod" required><option value="">Choose a payment method</option><option value="UPI" <%= values.paymentMethod === 'UPI' ? 'selected' : '' %>>UPI (simulated)</option><option value="Debit/Credit Card" <%= values.paymentMethod === 'Debit/Credit Card' ? 'selected' : '' %>>Debit / credit card (simulated)</option><option value="Cash on Pickup" <%= values.paymentMethod === 'Cash on Pickup' ? 'selected' : '' %>>Cash on pickup</option></select>
+          <div class="demo-note"><i class="bi bi-info-circle"></i> Demo checkout only. No real payment is collected.</div>
+          <button class="btn btn-dark rounded-pill w-100 reserve-submit" type="submit">Confirm booking <i class="bi bi-arrow-right ms-2"></i></button>
+        </form>
+      </section>
+      <aside class="panel-card booking-summary">
+        <% if (vehicleImage(vehicle)) { %><img class="summary-image" src="<%= vehicleImage(vehicle) %>" alt="<%= vehicle.brand %> <%= vehicle.model %>"><% } %>
+        <span class="eyebrow"><%= vehicle.type %> · <%= vehicle.brand %></span><h2><%= vehicle.model %></h2>
+        <div class="vehicle-specs"><span><i class="bi bi-fuel-pump"></i><%= vehicle.fuel_type %></span><span><i class="bi bi-people"></i><%= vehicle.seating_capacity %> seats</span><span><i class="bi bi-gear"></i><%= vehicle.transmission %></span></div>
+        <div class="cost-breakdown"><div><span>Rental <small data-out="days">0 days</small></span><strong data-out="rental"><%= formatMoney(0) %></strong></div><div><span>Refundable security deposit</span><strong><%= formatMoney(vehicle.security_deposit) %></strong></div><div class="cost-total"><span>Total due</span><strong data-out="total"><%= formatMoney(vehicle.security_deposit) %></strong></div></div>
+        <p class="summary-footnote"><i class="bi bi-shield-check"></i> Your booking is protected by secure account sign-in.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+<%- include('partials/footer') %>

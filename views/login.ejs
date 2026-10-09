@@ -1,0 +1,15 @@
+<%- include('partials/head', { title, active, currentUser, flashMessages }) %>
+<section class="auth-section">
+  <div class="auth-aside login-aside"><span class="eyebrow">WELCOME BACK</span><h1>Your next ride<br>is just <em>around the corner.</em></h1><p>Sign in to keep your plans moving and all your bookings in one place.</p><div class="auth-aside-mark"><i class="bi bi-arrow-up-right"></i></div></div>
+  <div class="auth-panel"><div class="auth-form-wrap">
+    <span class="eyebrow">YOUR ACCOUNT</span><h2>Good to see you.</h2><p class="form-intro">Sign in with your email and password.</p>
+    <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+    <form method="post" action="/login">
+      <label class="form-label" for="email">Email address</label><input class="form-control" id="email" name="email" type="email" value="<%= email %>" autocomplete="email" required>
+      <label class="form-label mt-3" for="password">Password</label><input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required>
+      <button class="btn btn-dark w-100 rounded-pill auth-submit" type="submit">Sign in <i class="bi bi-arrow-right ms-2"></i></button>
+    </form>
+    <p class="auth-switch">New to RideEase? <a href="/register">Create an account</a></p>
+  </div></div>
+</section>
+<%- include('partials/footer') %>

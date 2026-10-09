@@ -1,0 +1,22 @@
+<article class="vehicle-card">
+  <a class="vehicle-image" href="/vehicles/<%= vehicle.vehicle_id %>/book" aria-label="Book <%= vehicle.brand %> <%= vehicle.model %>">
+    <% if (vehicleImage(vehicle)) { %>
+      <img src="<%= vehicleImage(vehicle) %>" alt="<%= vehicle.brand %> <%= vehicle.model %>" loading="lazy">
+    <% } else { %>
+      <div class="vehicle-fallback"><i class="bi bi-car-front-fill"></i></div>
+    <% } %>
+    <span class="vehicle-type"><i class="bi <%= vehicle.type === 'Bike' ? 'bi-bicycle' : 'bi-car-front' %>"></i><%= vehicle.type %></span>
+  </a>
+  <div class="vehicle-content">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+      <div><span class="eyebrow"><%= vehicle.brand %></span><h3><%= vehicle.model %></h3></div>
+      <div class="vehicle-price"><strong><%= formatMoney(vehicle.rent_per_day) %></strong><span>/ day</span></div>
+    </div>
+    <div class="vehicle-specs">
+      <span><i class="bi bi-fuel-pump"></i><%= vehicle.fuel_type %></span>
+      <span><i class="bi bi-people"></i><%= vehicle.seating_capacity %> seats</span>
+      <span><i class="bi bi-gear"></i><%= vehicle.transmission %></span>
+    </div>
+    <a class="vehicle-link" href="/vehicles/<%= vehicle.vehicle_id %>/book">View & book <i class="bi bi-arrow-up-right"></i></a>
+  </div>
+</article>

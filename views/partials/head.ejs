@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f5">
+  <meta name="description" content="Discover, book and enjoy your next ride with RideEase.">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/bootstrap/icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<%- include('nav') %>
+<% const noticeKinds = ['success', 'error', 'info', 'warning']; %>
+<% noticeKinds.forEach((kind) => { (flashMessages[kind] || []).forEach((message) => { %>
+  <div class="container notice-wrap">
+    <div class="alert alert-<%= kind === 'error' ? 'danger' : kind %> alert-dismissible fade show" role="alert">
+      <%= message %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+<% }); }); %>

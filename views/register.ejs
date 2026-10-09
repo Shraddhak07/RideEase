@@ -1,0 +1,17 @@
+<%- include('partials/head', { title, active, currentUser, flashMessages }) %>
+<section class="auth-section">
+  <div class="auth-aside register-aside"><span class="eyebrow">GOOD TO GO</span><h1>More exploring.<br>Less <em>getting there.</em></h1><p>Join RideEase and get the keys to your next city break, weekend trip or everyday adventure.</p><div class="auth-aside-mark"><i class="bi bi-compass"></i></div></div>
+  <div class="auth-panel"><div class="auth-form-wrap">
+    <span class="eyebrow">GET STARTED</span><h2>Make yourself at home.</h2><p class="form-intro">Create your free RideEase account.</p>
+    <% if (errors.length) { %><div class="alert alert-danger"><strong>Almost there</strong><ul class="mb-0 mt-2"><% errors.forEach((error) => { %><li><%= error %></li><% }); %></ul></div><% } %>
+    <form method="post" action="/register">
+      <label class="form-label" for="name">Full name</label><input class="form-control" id="name" name="name" maxlength="100" value="<%= values.name || '' %>" autocomplete="name" required>
+      <div class="row g-3 mt-0"><div class="col-md-7"><label class="form-label" for="email">Email address</label><input class="form-control" id="email" name="email" type="email" maxlength="100" value="<%= values.email || '' %>" autocomplete="email" required></div><div class="col-md-5"><label class="form-label" for="phone">Phone</label><input class="form-control" id="phone" name="phone" type="tel" maxlength="20" value="<%= values.phone || '' %>" autocomplete="tel" required></div></div>
+      <label class="form-label mt-3" for="password">Password <span class="label-hint">8–72 characters</span></label><input class="form-control" id="password" name="password" type="password" minlength="8" maxlength="72" autocomplete="new-password" required>
+      <label class="form-label mt-3" for="confirmPassword">Confirm password</label><input class="form-control" id="confirmPassword" name="confirmPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password" required>
+      <button class="btn btn-dark w-100 rounded-pill auth-submit" type="submit">Create account <i class="bi bi-arrow-right ms-2"></i></button>
+    </form>
+    <p class="auth-switch">Already have an account? <a href="/login">Sign in</a></p>
+  </div></div>
+</section>
+<%- include('partials/footer') %>

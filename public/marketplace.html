@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RideEase | Rent a ride</title>
+  <meta name="description" content="Browse local vehicles, book a rental, or list your vehicle on RideEase.">
+  <link rel="stylesheet" href="/portal.css">
+  <link rel="stylesheet" href="/polish.css">
+  <script defer src="/portal.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/"><span class="brand-mark">R</span><span>RideEase<small>Find your next ride</small></span></a>
+    <nav><a href="#vehicles">Marketplace</a><a href="/account">List your vehicle</a><a href="/admin">Admin</a></nav>
+    <a class="button button-primary" id="accountLink" href="/account">Log in / Sign up</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">YOUR NEXT RIDE STARTS HERE</span>
+        <h1>Good rides.<br><em>Good people.</em></h1>
+        <p>Rent a vehicle from a local owner, or share your own ride with the community. Every listing is reviewed before it goes live.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#vehicles">Browse vehicles</a><a class="button button-quiet" href="/account?role=seller">Become a seller</a></div>
+        <p class="demo-note">Demo checkout only — no real money is collected.</p>
+      </div>
+      <div class="hero-art" aria-label="A real motorcycle photo"><img class="hero-bike" src="/images/bikes/bike_classic.jpg" alt=""><div class="art-label"><span>RIDE EASE · EST. 2026</span><strong>Make the road yours.</strong><span>Good rides start here.</span></div><span class="art-stamp">READY<br>TO RIDE</span></div>
+    </section>
+
+    <section class="section marketplace" id="vehicles">
+      <div class="section-heading"><div><span class="eyebrow">APPROVED BY OUR TEAM</span><h2>Find your ride</h2><p>Browse available vehicles from verified community sellers. Sample listing photos are illustrative; seller photos are uploaded by the owner.</p></div><button class="button button-quiet" id="refreshVehicles" type="button">Refresh</button></div>
+      <form class="bike-search" id="bikeSearchForm" role="search">
+        <label class="sr-only" for="bikeSearch">Search bikes</label>
+        <input id="bikeSearch" name="search" type="search" placeholder="Search by bike name or keyword" autocomplete="off">
+        <button class="button button-primary" type="submit">Search bikes</button>
+      </form>
+      <p class="search-status" id="vehicleSearchStatus" aria-live="polite"></p>
+      <div class="vehicle-grid" id="vehicleGrid" aria-live="polite"><p class="empty-state">Loading vehicles…</p></div>
+    </section>
+
+    <section class="steps section">
+      <div><span class="eyebrow">SIMPLE BY DESIGN</span><h2>Three easy steps</h2></div>
+      <div class="step-grid"><article><b>01</b><h3>Find your vehicle</h3><p>Choose a listing and dates that work for you.</p></article><article><b>02</b><h3>Book with confidence</h3><p>See your day rate and full rental total before you confirm.</p></article><article><b>03</b><h3>Enjoy the ride</h3><p>Get a demo receipt and coordinate pickup with the owner.</p></article></div>
+    </section>
+  </main>
+
+  <dialog id="bookingDialog" class="booking-dialog">
+    <form id="bookingForm">
+      <div class="dialog-heading"><div><span class="eyebrow">RENT A VEHICLE</span><h2 id="bookingTitle">Your booking</h2><p id="bookingRate" class="muted"></p></div><button class="icon-button" id="closeBooking" type="button" aria-label="Close">×</button></div>
+      <input type="hidden" id="vehicleId">
+      <div class="date-grid"><label>Pickup date<input required id="pickupDate" type="date"></label><label>Return date<input required id="returnDate" type="date"></label></div>
+      <label>Demo payment method<select id="paymentMethod" required><option value="demo_upi">UPI (simulated)</option><option value="demo_card">Card (simulated)</option><option value="cash">Cash on pickup</option></select></label>
+      <p class="demo-note">This is a demo. Card and UPI selections create a simulated payment record only. No payment credentials are requested and no money moves.</p>
+      <div class="total-row"><span id="rentalDays">Select your dates</span><strong id="rentalTotal">—</strong></div>
+      <p class="form-error" id="bookingError" role="alert"></p>
+      <button class="button button-primary button-full" id="confirmBooking" type="submit">Confirm demo booking</button>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <footer>© 2026 RideEase <span>Local rentals, made easy.</span><a href="/admin">Admin dashboard</a></footer>
+</body>
+</html>
