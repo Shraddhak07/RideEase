@@ -1,31 +1,57 @@
 # RideEase
 
 RideEase is a locally hosted bike-rental marketplace built with Node.js,
-Express, and MySQL/MariaDB. Customers can find approved bikes, book rental
-dates, and leave verified reviews. Sellers can submit bikes for admin review.
-Payments are simulated for demonstration only; no money is collected.
+Express, and MySQL/MariaDB. It lets shoppers browse approved bikes, book
+rental dates, leave verified reviews, and manage a simple demo marketplace
+workflow from a single app.
+
+This project is designed for local development and demonstration. It simulates
+payments, stores sessions in MySQL, and includes separate customer, seller, and
+admin experiences.
+
+## Why RideEase?
+
+RideEase solves a common marketplace problem: a simple, working rental flow
+without relying on a payment gateway or external services. Sellers can list
+bikes, admins can approve or reject listings, and customers can rent using a
+clean web interface.
 
 ## Features
 
 - Search approved bikes by name, description, mileage, or daily rental price.
-- Customer and seller registration and login with bcrypt password hashing.
+- Customer and seller registration with unique usernames, username-or-email
+  login, and bcrypt password hashing.
 - Seller dashboard for photo uploads, listing submissions, and approval status.
 - Admin dashboard to approve or reject seller listings.
 - Customer bookings with server-calculated totals and overlapping-booking
-  prevention.
+  prevention, including a sold-out status for reserved dates.
+- Seller listing removal hides bikes from future customers while preserving
+  existing confirmed rentals.
 - Demo UPI/card payment records and cash-on-pickup records; no payment provider
   or real card details are used.
 - One 1–5 star review per eligible completed rental, with average ratings and
   verified review counts shown on bike cards.
 - MySQL-backed sessions.
 - Responsive marketplace, account, and admin pages.
+- Normalized booking and payment records: rental duration and totals are
+  calculated from dates and the agreed daily rate rather than stored twice.
+
+## Tech stack
+
+- Node.js 18+
+- Express.js
+- MySQL or MariaDB
+- MySQL2 client
+- Bcrypt for password hashing
+- Express Session with MySQL persistence
+- HTML, CSS, and vanilla JavaScript for the front-end
 
 ## Requirements
 
 - Node.js 18 or later and npm.
 - MySQL or MariaDB, running locally or reachable from the app.
 
-## Setup
+## Quick start
 
 1. Install project dependencies:
 
@@ -66,20 +92,37 @@ Payments are simulated for demonstration only; no money is collected.
    npm start
    ```
 
-   Open [http://localhost:3000](http://localhost:3000).
+6. Open the app in your browser:
 
-Set `PORT` to change the local server port. Database defaults are
-`127.0.0.1:3306`, database `rideease_db`, user `root`, and an empty password;
-use environment variables rather than editing source code to change them.
+   ```text
+   http://localhost:3000
+   ```
+
+## Demo accounts
+
+- Admin: `admin` / `admin123`
+- Customer and seller accounts can be created from the account page.
+
+Change the default admin password before exposing the app beyond a trusted local
+development environment.
 
 ## Pages
 
 - `/` — public marketplace, bike search, ratings, and booking dialog.
 - `/account` — customer and seller registration, login, and dashboard.
 - `/admin` — admin login and listing approvals.
+- `/terms` — project terms and usage notes.
 
-The local demo admin account is **`admin` / `admin123`**. Change the password
-before exposing the app beyond a trusted local development environment.
+## Business rules and data model
+
+The marketplace tables follow 3NF: bookings store the dates and agreed daily
+rate, while rental days, totals, and payment status are derived when needed.
+`npm run db:migrate` checks existing stored values before removing their
+redundant copies.
+
+Set `PORT` to change the local server port. Database defaults are
+`127.0.0.1:3306`, database `rideease_db`, user `root`, and an empty password;
+use environment variables rather than editing source code to change them.
 
 ## Reviews and demo payments
 
@@ -95,7 +138,7 @@ payment provider, or move money.
 ## Project layout
 
 ```text
-database/       Database migration
+database/       Migration and schema helpers
 docs/           Marketplace documentation
 public/         Marketplace, account, admin pages, scripts, styles, and photos
 src/            Shared database helpers
@@ -106,3 +149,10 @@ server.js       Express app and API routes
 
 The included sample vehicle photos and their credits are documented in
 `public/images/bikes/ATTRIBUTION.md`.
+
+## Notes
+
+- The app is intended for local demo use and learning.
+- The included bike images have attribution notes in the project assets.
+- Running the app in production should use a strong `SESSION_SECRET` and a
+  non-default admin password.
