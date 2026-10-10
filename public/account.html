@@ -22,7 +22,7 @@
         <div class="tab-row"><button class="tab active" id="showLogin" type="button">Log in</button><button class="tab" id="showRegister" type="button">Create account</button></div>
         <form id="loginForm" class="form-stack">
           <label>Account type<select name="role" id="loginRole"><option value="customer">Customer</option><option value="seller">Seller</option></select></label>
-          <label>Email<input type="email" name="email" autocomplete="email" required></label>
+          <label>Username or email<input type="text" name="identifier" autocomplete="username" required></label>
           <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
           <p class="form-error" id="loginError" role="alert"></p>
           <button class="button button-primary button-full" type="submit">Log in</button>
@@ -30,6 +30,7 @@
         <form id="registerForm" class="form-stack hidden">
           <label>I want to<select name="role" id="registerRole"><option value="customer">Rent vehicles</option><option value="seller">List my vehicle</option></select></label>
           <label>Your name<input type="text" name="name" minlength="2" maxlength="100" autocomplete="name" required></label>
+          <label>Username<input type="text" name="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9_.\-]{3,30}" autocomplete="username" required><small>3–30 letters, numbers, dots, underscores, or hyphens.</small></label>
           <label>Email<input type="email" name="email" maxlength="254" autocomplete="email" required></label>
           <label>Password<input type="password" name="password" minlength="8" maxlength="72" autocomplete="new-password" required><small>Use at least 8 characters.</small></label>
           <p class="form-error" id="registerError" role="alert"></p>
@@ -61,6 +62,6 @@
     </section>
   </main>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <footer>© 2026 RideEase <span>Demo app. No real payments are processed.</span><a href="/admin">Admin sign in</a></footer>
+  <footer>© 2026 RideEase <span>Demo app. No real payments are processed.</span><a href="/admin">Admin sign in</a><a href="/terms">Terms and Conditions</a><a href="tel:98819654544">Call us</a><a href="mailto:info@rideease.com">Email us</a></footer>
 </body>
 </html>

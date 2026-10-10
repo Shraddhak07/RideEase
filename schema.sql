@@ -3,6 +3,7 @@
 --  Database : rideease_db
 --  Engine   : MySQL / MariaDB (InnoDB, utf8mb4)
 --  Usage    : mysql -u root -p < schema.sql
+--  Marketplace tables are created by database/migrate.js.
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS rideease_db
@@ -26,7 +27,7 @@ INSERT IGNORE INTO admins (username, password) VALUES
 ('admin', 'admin123');
 
 -- ------------------------------------------------------------
--- Table: bikes  (premium pre-owned bike inventory)
+-- Table: bikes (vehicle data; price is purchase value, rental_price is daily rate)
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS bikes (
   id          INT AUTO_INCREMENT PRIMARY KEY,

@@ -144,6 +144,7 @@ function renderPage(file) {
 app.get('/', renderPage('marketplace.html'));
 app.get('/account', renderPage('account.html'));
 app.get('/admin', renderPage('admin.html'));
+app.get('/terms', renderPage('terms.html'));
 app.use(express.static(PUBLIC_DIR));
 app.use('/uploads', express.static(UPLOADS_DIR));
 app.use('/api', (req, res, next) => {
@@ -156,55 +157,56 @@ app.get('/api/auth/session', (req, res) => {
 });
 
 app.post('/api/auth/register', asyncRoute(async (req, res) => {
-  const { name, email, password, role } = req.body || {};
+  const { name, username, email, password, role } = req.body || {};
   if (typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 100 ||
+      typeof username !== 'string' || !/^[a-zA-Z0-9_.-]{3,30}$/.test(username) ||
       typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 ||
       typeof password !== 'string' || password.length < 8 || password.length > 72 ||
       !['seller', 'customer'].includes(role)) {
-    return sendError(res, 400, 'Enter a name, valid email, password (at least 8 characters), and customer or seller account type.');
+    return sendError(res, 400, 'Enter your name, a username (3–30 letters, numbers, dots, underscores, or hyphens), a valid email, a password (at least 8 characters), and customer or seller account type.');
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
   try {
     const [result] = await pool.query(
-      'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)',
-      [name.trim(), email.trim().toLowerCase(), passwordHash, role]
+      'INSERT INTO users (name, username, email, password_hash, role) VALUES (?, ?, ?, ?, ?)',
+      [name.trim(), username.trim(), email.trim().toLowerCase(), passwordHash, role]
     );
-    const user = { id: result.insertId, name: name.trim(), email: email.trim().toLowerCase(), role };
+    const user = { id: result.insertId, name: name.trim(), username: username.trim(), email: email.trim().toLowerCase(), role };
     await new Promise((resolve, reject) => req.session.regenerate((error) => error ? reject(error) : resolve()));
     req.session.user = user;
     await new Promise((resolve, reject) => req.session.save((error) => error ? reject(error) : resolve()));
     return res.status(201).json({ success: true, user });
   } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') return sendError(res, 409, 'An account with that email already exists.');
+    if (error.code === 'ER_DUP_ENTRY') return sendError(res, 409, 'That username or email is already in use.');
     throw error;
   }
 }));
 
 app.post('/api/auth/login', asyncRoute(async (req, res) => {
-  const { email, password, role } = req.body || {};
+  const { identifier, email, password, role } = req.body || {};
+  const loginIdentifier = typeof identifier === 'string' ? identifier.trim() : (typeof email === 'string' ? email.trim() : '');
   if (typeof password !== 'string' || !password || !['admin', 'seller', 'customer'].includes(role)) {
     return sendError(res, 400, 'Enter your password and choose a valid account type.');
   }
 
   let user;
   if (role === 'admin') {
-    const username = typeof email === 'string' ? email.trim() : '';
-    const [admins] = await pool.query('SELECT id, username, password FROM admins WHERE username = ? LIMIT 1', [username]);
+    const [admins] = await pool.query('SELECT id, username, password FROM admins WHERE username = ? LIMIT 1', [loginIdentifier]);
     if (!admins.length || !(await bcrypt.compare(password, admins[0].password))) {
       return sendError(res, 401, 'The admin username or password is incorrect.');
     }
     user = { id: admins[0].id, name: admins[0].username, email: admins[0].username, role: 'admin' };
   } else {
-    if (typeof email !== 'string' || !email.trim()) return sendError(res, 400, 'Enter your account email.');
+    if (!loginIdentifier) return sendError(res, 400, 'Enter your username or account email.');
     const [users] = await pool.query(
-      'SELECT id, name, email, password_hash, role FROM users WHERE email = ? AND role = ? LIMIT 1',
-      [email.trim().toLowerCase(), role]
+      'SELECT id, name, username, email, password_hash, role FROM users WHERE (username = ? OR email = ?) AND role = ? LIMIT 1',
+      [loginIdentifier, loginIdentifier.toLowerCase(), role]
     );
     if (!users.length || !(await bcrypt.compare(password, users[0].password_hash))) {
-      return sendError(res, 401, 'The email or password is incorrect.');
+      return sendError(res, 401, 'The username/email or password is incorrect.');
     }
-    user = { id: users[0].id, name: users[0].name, email: users[0].email, role: users[0].role };
+    user = { id: users[0].id, name: users[0].name, username: users[0].username, email: users[0].email, role: users[0].role };
   }
 
   await new Promise((resolve, reject) => req.session.regenerate((error) => error ? reject(error) : resolve()));
@@ -232,10 +234,39 @@ app.get('/api/bikes', asyncRoute(async (req, res) => {
       JOIN bookings ON bookings.id = reviews.booking_id
       GROUP BY bookings.vehicle_id
     ) r ON r.vehicle_id = b.id
-    WHERE b.approval_status = 'approved'
+    WHERE b.approval_status = 'approved' AND b.seller_removed_at IS NULL
     ORDER BY b.created_at DESC, b.id DESC
   `);
   res.json({ success: true, count: bikes.length, bikes });
+}));
+
+app.get('/api/bikes/:id/availability', asyncRoute(async (req, res) => {
+  const id = Number(req.params.id);
+  const { pickupDate, returnDate } = req.query;
+  if (!Number.isInteger(id) || id <= 0 || !validateDate(pickupDate) || !validateDate(returnDate)) {
+    return sendError(res, 400, 'Choose valid pickup and return dates.');
+  }
+  const days = (Date.parse(`${returnDate}T00:00:00Z`) - Date.parse(`${pickupDate}T00:00:00Z`)) / 86400000;
+  if (pickupDate < new Date().toISOString().slice(0, 10) || !Number.isInteger(days) || days < 1 || days > 90) {
+    return sendError(res, 400, 'Choose a pickup date today or later and a return date 1 to 90 days after pickup.');
+  }
+  const [bikes] = await pool.query(
+    "SELECT id FROM bikes WHERE id = ? AND approval_status = 'approved' AND seller_removed_at IS NULL",
+    [id]
+  );
+  if (!bikes.length) return sendError(res, 404, 'This vehicle is not available for rental.');
+  const [conflicts] = await pool.query(
+    `SELECT id FROM bookings
+     WHERE vehicle_id = ? AND status = 'confirmed'
+       AND pickup_date < ? AND return_date > ?
+     LIMIT 1`,
+    [id, returnDate, pickupDate]
+  );
+  res.json({
+    success: true,
+    available: conflicts.length === 0,
+    message: conflicts.length ? 'Sold out for the selected dates.' : 'Available for the selected dates.'
+  });
 }));
 
 app.post('/api/listings', requireRole('seller'), (req, res, next) => {
@@ -271,17 +302,93 @@ app.post('/api/listings', requireRole('seller'), (req, res, next) => {
 
 app.get('/api/listings/mine', requireRole('seller'), asyncRoute(async (req, res) => {
   const [listings] = await pool.query(
-    `SELECT id, title, rental_price, km_driven, image_url, approval_status, created_at
+    `SELECT id, title, rental_price, km_driven, image_url, approval_status, seller_removed_at, created_at,
+            (SELECT COUNT(*) FROM bookings
+             WHERE vehicle_id = bikes.id AND status = 'confirmed' AND return_date > CURRENT_DATE()) AS future_bookings
      FROM bikes WHERE seller_id = ? ORDER BY created_at DESC, id DESC`,
     [req.session.user.id]
   );
+  const [bookings] = await pool.query(
+    `SELECT bookings.id, bookings.vehicle_id, bookings.pickup_date, bookings.return_date
+     FROM bookings
+     JOIN bikes ON bikes.id = bookings.vehicle_id
+     WHERE bikes.seller_id = ? AND bookings.status = 'confirmed'
+       AND bookings.return_date > CURRENT_DATE()
+     ORDER BY bookings.pickup_date, bookings.id`,
+    [req.session.user.id]
+  );
+  const bookingsByVehicle = new Map();
+  for (const booking of bookings) {
+    const vehicleBookings = bookingsByVehicle.get(booking.vehicle_id) || [];
+    vehicleBookings.push(booking);
+    bookingsByVehicle.set(booking.vehicle_id, vehicleBookings);
+  }
+  for (const listing of listings) {
+    listing.bookings = bookingsByVehicle.get(listing.id) || [];
+  }
   res.json({ success: true, listings });
+}));
+
+app.delete('/api/listings/:id', requireRole('seller'), asyncRoute(async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) return sendError(res, 400, 'Invalid listing id.');
+
+  const connection = await pool.getConnection();
+  let failure;
+  let futureBookings = 0;
+  try {
+    await connection.beginTransaction();
+    const [listings] = await connection.query(
+      'SELECT id, seller_removed_at FROM bikes WHERE id = ? AND seller_id = ? FOR UPDATE',
+      [id, req.session.user.id]
+    );
+    if (!listings.length) {
+      await connection.rollback();
+      return sendError(res, 404, 'Your listing was not found.');
+    }
+    if (listings[0].seller_removed_at) {
+      await connection.rollback();
+      return sendError(res, 409, 'This listing has already been removed.');
+    }
+    const [[bookingCount]] = await connection.query(
+      `SELECT COUNT(*) AS count FROM bookings
+       WHERE vehicle_id = ? AND status = 'confirmed' AND return_date > CURRENT_DATE()`,
+      [id]
+    );
+    futureBookings = Number(bookingCount.count);
+    await connection.query(
+      'UPDATE bikes SET seller_removed_at = CURRENT_TIMESTAMP WHERE id = ? AND seller_id = ?',
+      [id, req.session.user.id]
+    );
+    await connection.commit();
+  } catch (error) {
+    try {
+      await connection.rollback();
+    } catch (rollbackError) {
+      console.error('[LISTINGS] Could not roll back seller removal:', rollbackError.message);
+    }
+    failure = error;
+  } finally {
+    connection.release();
+  }
+  if (failure) throw failure;
+
+  res.json({
+    success: true,
+    message: futureBookings
+      ? `Listing removed. ${futureBookings} existing future rental${futureBookings === 1 ? '' : 's'} remain confirmed.`
+      : 'Listing removed from the marketplace.'
+  });
 }));
 
 app.get('/api/bookings/mine', requireRole('customer'), asyncRoute(async (req, res) => {
   const [bookings] = await pool.query(
-    `SELECT b.id, b.pickup_date, b.return_date, b.total_days, b.rate_per_day, b.total_amount,
-            b.status, v.title, p.method AS payment_method, p.status AS payment_status, p.reference,
+    `SELECT b.id, b.pickup_date, b.return_date,
+            DATEDIFF(b.return_date, b.pickup_date) AS total_days, b.rate_per_day,
+            ROUND(b.rate_per_day * DATEDIFF(b.return_date, b.pickup_date), 2) AS total_amount,
+            b.status, v.title, v.image_url, p.method AS payment_method,
+            CASE WHEN p.method = 'cash' THEN 'pay_on_pickup' ELSE 'simulated' END AS payment_status,
+            p.reference,
             r.rating AS review_rating, r.comment AS review_comment,
             (b.status = 'confirmed' AND b.return_date <= CURRENT_DATE()) AS review_eligible
      FROM bookings b
@@ -347,11 +454,11 @@ app.post('/api/bookings', requireRole('customer'), asyncRoute(async (req, res) =
   try {
     await connection.beginTransaction();
     const [bikes] = await connection.query(
-      `SELECT id, title, rental_price, approval_status, seller_id
+      `SELECT id, title, rental_price, approval_status, seller_id, seller_removed_at
        FROM bikes WHERE id = ? FOR UPDATE`,
       [id]
     );
-    if (!bikes.length || bikes[0].approval_status !== 'approved') {
+    if (!bikes.length || bikes[0].approval_status !== 'approved' || bikes[0].seller_removed_at) {
       await connection.rollback();
       return sendError(res, 404, 'This vehicle is not available for rental.');
     }
@@ -374,15 +481,15 @@ app.post('/api/bookings', requireRole('customer'), asyncRoute(async (req, res) =
     const total = Number((Number(bikes[0].rental_price) * days).toFixed(2));
     const [booking] = await connection.query(
       `INSERT INTO bookings
-       (vehicle_id, customer_id, pickup_date, return_date, total_days, rate_per_day, total_amount)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [id, req.session.user.id, pickupDate, returnDate, days, bikes[0].rental_price, total]
+       (vehicle_id, customer_id, pickup_date, return_date, rate_per_day)
+       VALUES (?, ?, ?, ?, ?)`,
+      [id, req.session.user.id, pickupDate, returnDate, bikes[0].rental_price]
     );
     const reference = `RE-${crypto.randomBytes(6).toString('hex').toUpperCase()}`;
     const paymentStatus = paymentMethod === 'cash' ? 'pay_on_pickup' : 'simulated';
     await connection.query(
-      'INSERT INTO payments (booking_id, method, status, amount, reference) VALUES (?, ?, ?, ?, ?)',
-      [booking.insertId, paymentMethod, paymentStatus, total, reference]
+      'INSERT INTO payments (booking_id, method, reference) VALUES (?, ?, ?)',
+      [booking.insertId, paymentMethod, reference]
     );
     await connection.commit();
     res.status(201).json({
@@ -427,6 +534,30 @@ app.patch('/api/admin/listings/:id', requireRole('admin'), asyncRoute(async (req
   );
   if (!result.affectedRows) return sendError(res, 404, 'Seller listing not found.');
   res.json({ success: true, message: status === 'approved' ? 'Listing approved and published.' : 'Listing rejected.' });
+}));
+
+app.post('/api/admin/password', requireRole('admin'), asyncRoute(async (req, res) => {
+  const { currentPassword, newPassword } = req.body || {};
+  if (typeof currentPassword !== 'string' || !currentPassword ||
+      typeof newPassword !== 'string' || newPassword.length < 8 || newPassword.length > 72) {
+    return sendError(res, 400, 'Enter your current password and a new password between 8 and 72 characters.');
+  }
+
+  const [admins] = await pool.query(
+    'SELECT password FROM admins WHERE id = ? LIMIT 1',
+    [req.session.user.id]
+  );
+  if (!admins.length || !(await bcrypt.compare(currentPassword, admins[0].password))) {
+    return sendError(res, 401, 'Your current password is incorrect.');
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 12);
+  const [result] = await pool.query(
+    'UPDATE admins SET password = ? WHERE id = ? AND password = ?',
+    [passwordHash, req.session.user.id, admins[0].password]
+  );
+  if (!result.affectedRows) return sendError(res, 409, 'The password changed in another request. Sign in again and retry.');
+  res.json({ success: true, message: 'Admin password updated successfully.' });
 }));
 
 app.get('/api/login', (req, res) => sendError(res, 405, 'Use POST /api/login to sign in.'));

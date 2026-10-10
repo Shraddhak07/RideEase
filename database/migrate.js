@@ -28,12 +28,34 @@ async function migrate() {
     CREATE TABLE IF NOT EXISTS users (
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(100) NOT NULL,
+      username VARCHAR(50) NOT NULL UNIQUE,
       email VARCHAR(254) NOT NULL UNIQUE,
       password_hash VARCHAR(255) NOT NULL,
       role ENUM('seller', 'customer') NOT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
+
+  const [userColumns] = await pool.query(
+    'SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
+    ['users']
+  );
+  const existingUserColumns = new Set(userColumns.map((column) => column.COLUMN_NAME));
+  if (!existingUserColumns.has('username')) {
+    await pool.query('ALTER TABLE users ADD COLUMN username VARCHAR(50) NULL AFTER name');
+  }
+
+  await pool.query(
+    "UPDATE users SET username = CONCAT('rider', id) WHERE username IS NULL OR TRIM(username) = ''"
+  );
+  const [userIndexes] = await pool.query(
+    'SELECT INDEX_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?',
+    ['users', 'username']
+  );
+  if (!userIndexes.some((index) => index.INDEX_NAME === 'uq_users_username' || index.INDEX_NAME === 'username')) {
+    await pool.query('ALTER TABLE users ADD UNIQUE INDEX uq_users_username (username)');
+  }
+  await pool.query('ALTER TABLE users MODIFY COLUMN username VARCHAR(50) NOT NULL');
 
   const [bikeColumns] = await pool.query(
     'SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
@@ -43,7 +65,8 @@ async function migrate() {
   const bikeChanges = [
     ['seller_id', 'ALTER TABLE bikes ADD COLUMN seller_id INT NULL'],
     ['rental_price', 'ALTER TABLE bikes ADD COLUMN rental_price DECIMAL(10,2) NOT NULL DEFAULT 850.00'],
-    ['approval_status', "ALTER TABLE bikes ADD COLUMN approval_status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved'"]
+    ['approval_status', "ALTER TABLE bikes ADD COLUMN approval_status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved'"],
+    ['seller_removed_at', 'ALTER TABLE bikes ADD COLUMN seller_removed_at DATETIME NULL']
   ];
 
   for (const [column, statement] of bikeChanges) {
@@ -80,9 +103,7 @@ async function migrate() {
       customer_id INT NOT NULL,
       pickup_date DATE NOT NULL,
       return_date DATE NOT NULL,
-      total_days INT NOT NULL,
       rate_per_day DECIMAL(10,2) NOT NULL,
-      total_amount DECIMAL(10,2) NOT NULL,
       status ENUM('confirmed', 'cancelled') NOT NULL DEFAULT 'confirmed',
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       INDEX idx_bookings_availability (vehicle_id, status, pickup_date, return_date),
@@ -97,13 +118,55 @@ async function migrate() {
       id INT AUTO_INCREMENT PRIMARY KEY,
       booking_id INT NOT NULL UNIQUE,
       method ENUM('demo_upi', 'demo_card', 'cash') NOT NULL,
-      status ENUM('simulated', 'pay_on_pickup') NOT NULL,
-      amount DECIMAL(10,2) NOT NULL,
       reference VARCHAR(32) NOT NULL UNIQUE,
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT fk_payments_booking FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE RESTRICT
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
+
+  const [bookingColumns] = await pool.query(
+    'SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
+    ['bookings']
+  );
+  const existingBookingColumns = new Set(bookingColumns.map((column) => column.COLUMN_NAME));
+  if (existingBookingColumns.has('total_days') || existingBookingColumns.has('total_amount')) {
+    const [inconsistentBookings] = await pool.query(`
+      SELECT COUNT(*) AS count
+      FROM bookings
+      WHERE ${existingBookingColumns.has('total_days') ? 'total_days <> DATEDIFF(return_date, pickup_date)' : '0'}
+         OR ${existingBookingColumns.has('total_amount') ? 'total_amount <> ROUND(rate_per_day * DATEDIFF(return_date, pickup_date), 2)' : '0'}
+    `);
+    if (Number(inconsistentBookings[0].count)) {
+      throw new Error('Cannot normalize bookings: stored duration or total disagrees with its dates and rate.');
+    }
+    const redundantBookingColumns = ['total_days', 'total_amount'].filter((column) => existingBookingColumns.has(column));
+    await pool.query(`ALTER TABLE bookings ${redundantBookingColumns.map((column) => `DROP COLUMN ${column}`).join(', ')}`);
+  }
+
+  const [paymentColumns] = await pool.query(
+    'SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
+    ['payments']
+  );
+  const existingPaymentColumns = new Set(paymentColumns.map((column) => column.COLUMN_NAME));
+  const redundantPaymentColumns = ['amount', 'status'].filter((column) => existingPaymentColumns.has(column));
+  if (redundantPaymentColumns.length) {
+    const amountMismatch = existingPaymentColumns.has('amount')
+      ? 'p.amount <> ROUND(b.rate_per_day * DATEDIFF(b.return_date, b.pickup_date), 2)'
+      : '0';
+    const statusMismatch = existingPaymentColumns.has('status')
+      ? "p.status <> CASE WHEN p.method = 'cash' THEN 'pay_on_pickup' ELSE 'simulated' END"
+      : '0';
+    const [inconsistentPayments] = await pool.query(`
+      SELECT COUNT(*) AS count
+      FROM payments p
+      JOIN bookings b ON b.id = p.booking_id
+      WHERE ${amountMismatch} OR ${statusMismatch}
+    `);
+    if (Number(inconsistentPayments[0].count)) {
+      throw new Error('Cannot normalize payments: stored amount or status disagrees with its booking or method.');
+    }
+    await pool.query(`ALTER TABLE payments ${redundantPaymentColumns.map((column) => `DROP COLUMN ${column}`).join(', ')}`);
+  }
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS reviews (

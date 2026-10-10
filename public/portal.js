@@ -8,6 +8,7 @@
   let selectedVehicle = null;
   let photoPreviewUrl = null;
   let toastTimer;
+  let availabilityCheckId = 0;
 
   function escapeHtml(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, (character) => ({
@@ -38,6 +39,54 @@
   function renderStars(rating) {
     const value = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
     return `${'★'.repeat(value)}${'☆'.repeat(5 - value)}`;
+  }
+
+  function formatRentalDate(value) {
+    const date = new Date(`${value}T00:00:00Z`);
+    return Number.isNaN(date.getTime())
+      ? escapeHtml(value)
+      : date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  }
+
+  function renderBookingTimeline(item) {
+    const today = dateString(new Date());
+    const cancelled = item.status === 'cancelled';
+    const started = today >= item.pickup_date;
+    const ended = today >= item.return_date;
+    const steps = [
+      {
+        state: cancelled ? 'cancelled' : 'complete',
+        title: cancelled ? 'Booking cancelled' : 'Booking confirmed',
+        detail: cancelled ? 'This reservation is no longer active.' : `Reference ${item.reference}`
+      },
+      {
+        state: cancelled ? 'upcoming' : started ? 'complete' : 'upcoming',
+        title: 'Pickup date',
+        detail: formatRentalDate(item.pickup_date)
+      },
+      {
+        state: cancelled ? 'upcoming' : ended ? 'complete' : started ? 'active' : 'upcoming',
+        title: ended ? 'Rental period ended' : started ? 'Rental in progress' : 'Rental upcoming',
+        detail: ended
+          ? `Scheduled return date: ${formatRentalDate(item.return_date)}`
+          : started
+            ? 'Your booking is within its scheduled rental dates.'
+            : `Starts ${formatRentalDate(item.pickup_date)}`
+      },
+      {
+        state: cancelled ? 'upcoming' : ended ? 'complete' : 'upcoming',
+        title: 'Return date',
+        detail: formatRentalDate(item.return_date)
+      }
+    ];
+    return `
+      <section class="booking-tracker" aria-label="Booking timeline">
+        <div class="tracker-heading"><strong>Track your booking</strong><span>Booking #${Number(item.id)}</span></div>
+        <ol class="booking-timeline">
+          ${steps.map((step) => `<li class="timeline-step ${step.state}"><span class="timeline-marker" aria-hidden="true"></span><div><strong>${step.title}</strong><p>${step.detail}</p></div></li>`).join('')}
+        </ol>
+        <p class="tracker-note">Rental progress follows the scheduled dates; vehicle handover is coordinated between you and the seller.</p>
+      </section>`;
   }
 
   function dateString(date) {
@@ -115,6 +164,40 @@
     $('#rentalTotal').textContent = currency.format(Number(selectedVehicle.rental_price) * days);
   }
 
+  async function checkVehicleAvailability() {
+    const status = $('#availabilityStatus');
+    const button = $('#confirmBooking');
+    if (!status || !button || !selectedVehicle) return;
+    const checkId = ++availabilityCheckId;
+    const pickupDate = $('#pickupDate').value;
+    const returnDate = $('#returnDate').value;
+    const days = (Date.parse(`${returnDate}T00:00:00Z`) - Date.parse(`${pickupDate}T00:00:00Z`)) / 86400000;
+    const today = dateString(new Date());
+    if (!pickupDate || !returnDate || pickupDate < today || !Number.isInteger(days) || days < 1 || days > 90) {
+      status.textContent = 'Choose valid dates to check availability.';
+      status.dataset.state = 'error';
+      button.disabled = true;
+      return;
+    }
+
+    status.textContent = 'Checking availability…';
+    status.dataset.state = 'checking';
+    button.disabled = true;
+    try {
+      const params = new URLSearchParams({ pickupDate, returnDate });
+      const result = await request(`/api/bikes/${encodeURIComponent(selectedVehicle.id)}/availability?${params}`);
+      if (checkId !== availabilityCheckId) return;
+      status.textContent = result.message;
+      status.dataset.state = result.available ? 'available' : 'sold-out';
+      button.disabled = !result.available;
+    } catch (error) {
+      if (checkId !== availabilityCheckId) return;
+      status.textContent = error.message;
+      status.dataset.state = 'error';
+      button.disabled = true;
+    }
+  }
+
   function openBooking(vehicle) {
     if (!currentUser || currentUser.role !== 'customer') {
       window.location.href = '/account?role=customer';
@@ -136,6 +219,7 @@
     tomorrow.setDate(tomorrow.getDate() + 1);
     $('#returnDate').value = dateString(tomorrow);
     updateEstimate();
+    checkVehicleAvailability();
     $('#bookingDialog').showModal();
   }
 
@@ -177,7 +261,7 @@
       if (seller) {
         $('#sellerTotalCount').textContent = items.length;
         $('#sellerPendingCount').textContent = items.filter((item) => item.approval_status === 'pending').length;
-        $('#sellerApprovedCount').textContent = items.filter((item) => item.approval_status === 'approved').length;
+        $('#sellerApprovedCount').textContent = items.filter((item) => item.approval_status === 'approved' && !item.seller_removed_at).length;
       }
       if (!items.length) {
         list.innerHTML = `<p class="empty-state">${seller ? 'You have not submitted a vehicle yet.' : 'No bookings yet. Browse the marketplace to find a ride.'}</p>`;
@@ -185,7 +269,19 @@
       }
       list.innerHTML = items.map((item) => {
         if (seller) {
-          return `<article class="activity-item"><img class="activity-image" src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}"><div class="activity-details"><strong>${escapeHtml(item.title)}</strong><p>${currency.format(Number(item.rental_price))} / day · ${new Date(item.created_at).toLocaleDateString()}</p></div><span class="badge ${escapeHtml(item.approval_status)}">${escapeHtml(item.approval_status)}</span></article>`;
+          const removed = Boolean(item.seller_removed_at);
+          const futureBookings = Number(item.future_bookings);
+          const rentalSlots = (item.bookings || []).map((booking) => {
+            const inProgress = dateString(new Date()) >= booking.pickup_date;
+            return `<div class="seller-rental-slot"><span class="badge ${inProgress ? 'rental-active' : 'rental-upcoming'}">${inProgress ? 'Booked · rental in progress' : 'Booked'}</span><p>${formatRentalDate(booking.pickup_date)} → ${formatRentalDate(booking.return_date)}</p></div>`;
+          }).join('');
+          const detail = removed
+            ? `Removed from marketplace${futureBookings ? ` · ${futureBookings} upcoming rental${futureBookings === 1 ? '' : 's'} remain confirmed` : ''}`
+            : `${currency.format(Number(item.rental_price))} / day · ${new Date(item.created_at).toLocaleDateString()}`;
+          const removeAction = removed
+            ? ''
+            : `<button class="button button-danger button-small" type="button" data-remove-listing="${Number(item.id)}">Delete listing</button>`;
+          return `<article class="activity-item seller-listing-item"><img class="activity-image" src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}"><div class="activity-details"><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(detail)}</p>${rentalSlots ? `<div class="seller-rentals"><strong>Rental schedule</strong>${rentalSlots}</div>` : ''}</div><div class="seller-listing-actions"><span class="badge ${removed ? 'rejected' : escapeHtml(item.approval_status)}">${removed ? 'removed' : escapeHtml(item.approval_status)}</span>${futureBookings ? `<span class="badge rental-upcoming">${futureBookings} booked</span>` : ''}${removeAction}</div></article>`;
         }
 
         let reviewContent;
@@ -206,7 +302,7 @@
           reviewContent = `<p class="review-locked">${item.status === 'confirmed' ? 'You can rate this verified rental after the return date.' : 'Only completed rentals can be rated.'}</p>`;
         }
 
-        return `<article class="customer-booking activity-item"><div class="booking-summary"><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.pickup_date)} → ${escapeHtml(item.return_date)} · ${Number(item.total_days)} days · ${currency.format(Number(item.total_amount))}</p><p>${item.payment_status === 'simulated' ? 'Demo payment simulated — not charged' : 'Pay on pickup'} · receipt ${escapeHtml(item.reference)}</p><span class="badge">${escapeHtml(item.status)}</span></div>${reviewContent}</article>`;
+        return `<article class="customer-booking activity-item"><div class="booking-card-heading"><img class="activity-image" src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}"><div class="booking-summary"><strong>${escapeHtml(item.title)}</strong><p>${formatRentalDate(item.pickup_date)} → ${formatRentalDate(item.return_date)} · ${Number(item.total_days)} days · ${currency.format(Number(item.total_amount))}</p><p>${item.payment_status === 'simulated' ? 'Demo payment simulated — not charged' : 'Pay on pickup'} · receipt ${escapeHtml(item.reference)}</p><span class="badge ${item.status === 'cancelled' ? 'rejected' : 'approved'}">${escapeHtml(item.status)}</span></div></div>${renderBookingTimeline(item)}${reviewContent}</article>`;
       }).join('');
     } catch (error) {
       list.innerHTML = `<p class="form-error">${escapeHtml(error.message)}</p>`;
@@ -329,11 +425,39 @@
         const result = await request('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: form.get('email'), password: form.get('password'), role: form.get('role') || 'admin' })
+          body: JSON.stringify({ identifier: form.get('identifier') || form.get('email'), password: form.get('password'), role: form.get('role') || 'admin' })
         });
         showWorkspace(result.user);
       } catch (error) {
         setError($('#loginError'), error.message);
+      }
+    });
+    const adminPasswordForm = $('#adminPasswordForm');
+    if (adminPasswordForm) adminPasswordForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      setError($('#adminPasswordError'), '');
+      setError($('#adminPasswordSuccess'), '');
+      const form = new FormData(adminPasswordForm);
+      const currentPassword = form.get('currentPassword');
+      const newPassword = form.get('newPassword');
+      if (newPassword !== form.get('confirmPassword')) {
+        setError($('#adminPasswordError'), 'The new passwords do not match.');
+        return;
+      }
+      const submitButton = adminPasswordForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      try {
+        const result = await request('/api/admin/password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+        adminPasswordForm.reset();
+        setError($('#adminPasswordSuccess'), result.message);
+      } catch (error) {
+        setError($('#adminPasswordError'), error.message);
+      } finally {
+        submitButton.disabled = false;
       }
     });
     if (registerForm) registerForm.addEventListener('submit', async (event) => {
@@ -344,7 +468,7 @@
         const result = await request('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: form.get('name'), email: form.get('email'), password: form.get('password'), role: form.get('role') })
+          body: JSON.stringify({ name: form.get('name'), username: form.get('username'), email: form.get('email'), password: form.get('password'), role: form.get('role') })
         });
         showWorkspace(result.user);
       } catch (error) {
@@ -403,6 +527,21 @@
       else loadAccountActivity();
     });
     if ($('#approvalList')) $('#approvalList').addEventListener('click', updateListingApproval);
+    if ($('#activityList')) $('#activityList').addEventListener('click', async (event) => {
+      const button = event.target.closest('[data-remove-listing]');
+      if (!button || !$('#activityList').contains(button)) return;
+      const listingId = button.dataset.removeListing;
+      if (!window.confirm('Remove this bike from the marketplace? Existing confirmed rentals will remain valid.')) return;
+      button.disabled = true;
+      try {
+        const result = await request(`/api/listings/${encodeURIComponent(listingId)}`, { method: 'DELETE' });
+        showToast(result.message);
+        await loadAccountActivity();
+      } catch (error) {
+        showToast(error.message);
+        button.disabled = false;
+      }
+    });
     if ($('#activityList')) $('#activityList').addEventListener('submit', async (event) => {
       const form = event.target.closest('[data-review-form]');
       if (!form) return;
@@ -452,8 +591,14 @@
         }
       });
       $('#bookingForm').addEventListener('submit', submitBooking);
-      $('#pickupDate').addEventListener('change', updateEstimate);
-      $('#returnDate').addEventListener('change', updateEstimate);
+      $('#pickupDate').addEventListener('change', () => {
+        updateEstimate();
+        checkVehicleAvailability();
+      });
+      $('#returnDate').addEventListener('change', () => {
+        updateEstimate();
+        checkVehicleAvailability();
+      });
       $('#closeBooking').addEventListener('click', () => $('#bookingDialog').close());
       $('#bookingDialog').addEventListener('click', (event) => {
         if (event.target === $('#bookingDialog')) $('#bookingDialog').close();

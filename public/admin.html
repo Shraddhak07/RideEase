@@ -16,19 +16,29 @@
       <form id="loginForm" class="panel form-stack admin-login">
         <input type="hidden" name="role" value="admin">
         <h2>Admin sign in</h2>
-        <label>Username<input type="text" name="email" autocomplete="username" required></label>
+        <label>Username<input type="text" name="identifier" autocomplete="username" required></label>
         <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
         <p class="form-error" id="loginError" role="alert"></p>
         <button class="button button-primary button-full" type="submit">Sign in</button>
-        <small>Local demo admin: admin / admin123</small>
       </form>
     </section>
     <section id="workspace" class="hidden">
       <div class="welcome-row"><div><span class="eyebrow">ADMIN DASHBOARD</span><h1>Listing <em>approvals</em></h1><p>Review each seller post before it appears in the customer marketplace.</p></div><button class="button button-quiet" id="refreshWorkspace" type="button">Refresh queue</button></div>
+      <section class="panel admin-password-panel">
+        <div class="panel-heading"><div><span class="eyebrow">ACCOUNT SECURITY</span><h2>Change your password</h2><p>Confirm your current password before setting a new one.</p></div></div>
+        <form id="adminPasswordForm" class="form-stack admin-password-form">
+          <label>Current password<input name="currentPassword" type="password" autocomplete="current-password" required></label>
+          <label>New password<input name="newPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password" required><small>Use 8–72 characters.</small></label>
+          <label>Confirm new password<input name="confirmPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password" required></label>
+          <p class="form-error" id="adminPasswordError" role="alert"></p>
+          <p class="success-message" id="adminPasswordSuccess" role="status" aria-live="polite"></p>
+          <button class="button button-primary" type="submit">Update password</button>
+        </form>
+      </section>
       <div class="approval-list" id="approvalList"><p class="empty-state">Loading listing queue…</p></div>
     </section>
   </main>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <footer>© 2026 RideEase <span>Admin tools</span><a href="/">Back to marketplace</a></footer>
+  <footer>© 2026 RideEase <span>Admin tools</span><a href="/">Back to marketplace</a><a href="/terms">Terms and Conditions</a><a href="tel:98819654544">Call us</a><a href="mailto:info@rideease.com">Email us</a></footer>
 </body>
 </html>

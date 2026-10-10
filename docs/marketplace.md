@@ -6,9 +6,24 @@ RideEase supports three account roles:
   see their booking receipts under their account, and rate a confirmed rental
   after its return date.
 - **Sellers** create an account, submit a vehicle photo, description, odometer
-  reading and daily rental price, then follow its approval status.
+  reading and daily rental price, follow its approval status, and remove a
+  listing they no longer want to rent.
 - **Admins** sign in at `/admin` and approve or reject seller submissions. Only
-  approved vehicles appear in the public marketplace.
+  approved vehicles appear in the public marketplace. Signed-in admins can
+  change their password from the dashboard after confirming the current one.
+
+The marketplace footer links to the Terms and Conditions page and provides
+tap-to-call and email contact links. Update the phone number and email in the
+page footers if the support contacts change.
+
+The booking dialog checks availability for the selected date range and marks
+overlapping dates as sold out. The server repeats this check when confirming a
+booking. Removing a seller listing hides it from future searches and bookings;
+existing confirmed rentals and their review history remain intact.
+
+Customers and sellers choose a unique username when creating an account and can
+sign in with either that username or their email address. Existing accounts
+continue to work with email; the migration assigns legacy accounts a username.
 
 ## Run locally
 
@@ -40,3 +55,19 @@ payment provider, or move money.
 Customer reviews are tied to the customer's own completed booking. Each rental
 can receive one 1–5 star rating and an optional comment. Marketplace cards show
 the average rating and verified review count.
+
+Customer booking cards show a date-based timeline for confirmation, pickup, the
+rental period, and the scheduled return. Seller listing cards show confirmed
+current and upcoming rental date ranges with a booked indicator. The timeline
+reflects reservation dates; physical pickup and return handovers are coordinated
+between the customer and seller and are not separately recorded by the app.
+
+## Database normalization
+
+Bookings store the rental dates and agreed daily-rate snapshot. Rental duration
+and total are calculated from those values rather than persisted redundantly.
+Payments store their booking, method, and reference; the payment amount is
+derived from the booking, and the displayed demo status is derived from the
+payment method. The migration checks legacy values against those derivations
+before dropping the redundant columns. Bike `price` is the vehicle's purchase
+value, while `rental_price` is the separate daily rental rate.

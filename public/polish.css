@@ -144,6 +144,24 @@ nav a:hover { color: var(--forest); background: #edf1e7; }
 .step-grid article { border: 1px solid rgba(39, 55, 42, .06); box-shadow: 0 7px 22px rgba(39, 53, 39, .035); }
 footer { color: #838a7e; }
 
+.terms-shell { max-width: 920px; margin: 0 auto; padding: 72px 24px 90px; }
+.terms-content {
+  border: 1px solid rgba(38, 55, 41, .075);
+  border-radius: 25px;
+  padding: clamp(25px, 5vw, 58px);
+  background: rgba(255, 255, 255, .8);
+  box-shadow: var(--shadow);
+}
+.terms-content h1 { margin: 12px 0 18px; font-size: clamp(2.5rem, 6vw, 4.5rem); letter-spacing: -.08em; }
+.terms-content h1 em { color: #779655; font-family: Georgia, serif; font-weight: 500; }
+.terms-intro,.terms-content section p { color: var(--muted); line-height: 1.8; }
+.terms-intro { margin-bottom: 38px; font-size: 1.03rem; }
+.terms-content section { margin: 30px 0; }
+.terms-content section h2 { margin-bottom: 8px; font-size: 1.18rem; letter-spacing: -.035em; }
+.terms-content section p { margin: 0; }
+.terms-content section a { color: var(--forest); font-weight: 700; text-decoration: underline; }
+.terms-content>.button { margin-top: 8px; }
+
 .account-shell { max-width: 1240px; padding-top: 55px; }
 .auth-layout { max-width: 1040px; min-height: 540px; grid-template-columns: 1fr 450px; }
 .auth-intro { position: relative; padding: 38px 20px 38px 0; }
@@ -296,12 +314,19 @@ footer { color: #838a7e; }
   transition: border-color .2s, transform .2s;
 }
 .activity-item:hover { transform: translateX(2px); border-color: #dbe4d2; }
+.seller-listing-item { align-items: center; }
+.seller-listing-actions { display: grid; justify-items: end; gap: 8px; flex-shrink: 0; }
+.seller-listing-actions .button { border: 0; }
 .activity-image { width: 61px; height: 61px; border-radius: 11px; }
 .activity-details strong { color: #344237; font-size: .82rem; }
 .activity-details p { font-size: .69rem; }
 .badge { padding: 7px 10px; }
 .badge.pending { color: #8d6a2b; background: #faf2dd; }
 .badge.approved { color: #54763f; background: #eaf2e1; }
+.availability-status { min-height: 1.2em; margin: -4px 0 2px; color: var(--muted); font-size: .78rem; }
+.availability-status[data-state="available"] { color: #54763f; }
+.availability-status[data-state="sold-out"],.availability-status[data-state="error"] { color: #ad4335; }
+.booking-dialog button:disabled { cursor: not-allowed; opacity: .65; }
 
 .seller-banner {
   position: relative;
@@ -334,12 +359,42 @@ footer { color: #838a7e; }
 
 .approval-card { border-radius: 19px; }
 .approval-copy { padding: 22px; }
+.admin-password-panel { margin: 0 0 24px; }
+.admin-password-form { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
+.admin-password-form .form-error,.admin-password-form .success-message { grid-column: 1 / -1; }
+.admin-password-form>button { min-height: 47px; }
 .toast { border: 1px solid rgba(255,255,255,.13); border-radius: 99px; }
 .vehicle-rating { display: flex; align-items: center; gap: 7px; color: #818774; font-size: .7rem!important; }
 .vehicle-rating>span,.review-stars { color: #bd8a36; font-size: .9rem; letter-spacing: .055em; }
 .customer-booking { display: grid; align-items: stretch; }
+.booking-card-heading { display: flex; align-items: center; gap: 14px; }
 .booking-summary { display: grid; gap: 4px; }
 .booking-summary .badge { justify-self: start; margin-top: 4px; }
+.booking-tracker { padding-top: 15px; border-top: 1px solid var(--line); }
+.tracker-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.tracker-heading strong { font-size: .92rem; }
+.tracker-heading>span,.tracker-note { color: var(--muted); font-size: .68rem; }
+.booking-timeline { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.timeline-step { position: relative; display: grid; grid-template-columns: 22px 1fr; gap: 10px; min-height: 63px; }
+.timeline-step:not(:last-child)::after { position: absolute; top: 20px; bottom: -1px; left: 9px; width: 2px; content: ""; background: #dfe4dc; }
+.timeline-marker { z-index: 1; width: 19px; height: 19px; margin-top: 1px; border: 2px solid #c9d0c4; border-radius: 50%; background: #fff; }
+.timeline-step.complete .timeline-marker,.timeline-step.active .timeline-marker { border-color: #559765; }
+.timeline-step.complete .timeline-marker { background: #559765; box-shadow: inset 0 0 0 4px #fff; }
+.timeline-step.complete:not(:last-child)::after { background: #559765; }
+.timeline-step.active .timeline-marker { box-shadow: inset 0 0 0 4px #fff; }
+.timeline-step.cancelled .timeline-marker { border-color: #b85c50; background: #b85c50; box-shadow: inset 0 0 0 4px #fff; }
+.timeline-step>div { padding-bottom: 15px; }
+.timeline-step strong { color: #3e4b41; font-size: .77rem; }
+.timeline-step p { margin: 3px 0 0; color: var(--muted); font-size: .69rem; line-height: 1.5; }
+.timeline-step.active p { color: #458255; font-weight: 650; }
+.timeline-step.upcoming strong { color: #818a7f; }
+.tracker-note { margin: 3px 0 0 32px; line-height: 1.55; }
+.seller-rentals { display: grid; gap: 8px; margin-top: 11px; padding-top: 10px; border-top: 1px solid var(--line); }
+.seller-rentals>strong { color: #53634f; font-size: .69rem; }
+.seller-rental-slot { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 9px; }
+.seller-rental-slot p { margin: 0; font-size: .68rem; }
+.badge.rental-active { color: #287a44; background: #e2f3e6; }
+.badge.rental-upcoming { color: #596f48; background: #eef3e7; }
 .customer-review-form,.saved-review { display: grid; gap: 9px; padding-top: 12px; border-top: 1px solid var(--line); }
 .review-prompt { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: #435144; font-size: .75rem; font-weight: 750; }
 .review-prompt>span { color: #72875d; font-size: .62rem; font-weight: 650; }
@@ -410,4 +465,6 @@ footer { color: #838a7e; }
   .photo-drop-copy small { font-size: .58rem!important; }
   .date-grid { gap: 9px; }
   footer { font-size: .68rem; }
+  .admin-password-form { grid-template-columns: 1fr; }
+  .admin-password-form .form-error,.admin-password-form .success-message { grid-column: auto; }
 }
